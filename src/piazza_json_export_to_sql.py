@@ -1,6 +1,7 @@
 import MySQLdb as mdb
 from datetime import datetime
 import json, time
+import os
 
 '''
 Takes paths containing users.json and class_content.json for class exports, and generates corresponding MySQL databases containing forum post data.
@@ -22,16 +23,26 @@ db_params = {
     'password': ''
 }
 
+
+
 tasks = [
- {'input': '../data/cs229/fall11/', 'db_name': 'fall11'},
- {'input': '../data/cs229/fall12/', 'db_name': 'fall12'},
- {'input': '../data/cs229/fall13/', 'db_name': 'fall13'},
- {'input': '../data/cs229/fall14/', 'db_name': 'fall14'},
- {'input': '../data/cs229/fall15/', 'db_name': 'fall15'},
- {'input': '../data/cs229/fall16/', 'db_name': 'fall16'},
- {'input': '../data/cs229/spring16/', 'db_name': 'spring16'}
+ # {'input': '../data/cs229/fall11/', 'db_name': 'fall11'},
+ # {'input': '../data/cs229/fall12/', 'db_name': 'fall12'},
+ # {'input': '../data/cs229/fall13/', 'db_name': 'fall13'},
+ # {'input': '../data/cs229/fall14/', 'db_name': 'fall14'},
+ # {'input': '../data/cs229/fall15/', 'db_name': 'fall15'},
+ # {'input': '../data/cs229/fall16/', 'db_name': 'fall16'},
+ # {'input': '../data/cs229/spring16/', 'db_name': 'spring16'},
+ #{'input': '../data/cs221/fall12/', 'db_name': 'cs221fall12'}
 ]
 
+DATA_DIRECTORY = '../data/solar/'
+for root, dirs, files in os.walk(DATA_DIRECTORY):
+    for dir in dirs:
+        k  = DATA_DIRECTORY.split('/')[-2]
+        tasks.append({'input':root+dir+'/','db_name':k+dir})
+
+print tasks
 
 def main(task):
     print task['db_name']
@@ -82,9 +93,9 @@ def main(task):
                 else: tc = '2000-01-10T00:00:00Z'
                 dt = datetime(int(tc[0:4]), int(tc[5:7]), int(tc[8:10]), int(tc[11:13]), int(tc[14:16]), int(tc[17:19]))
                 
-                if 'history' not in x.keys():
-                    print ""
-                    for k in sorted(x.keys()): print k, ":", x[k]
+                # if 'history' not in x.keys():
+                #     print ""
+                #     for k in sorted(x.keys()): print k, ":", x[k]
 
                 nodes = []
                 if 'history' in x.keys():
@@ -133,8 +144,8 @@ def main(task):
             )
             #print q
             cur.execute(q)
-
-
+    
+    cur.execute("select change_log from class_content INTO OUTFILE '/usr/local/dbout/{0}.txt'".format(task['db_name']))
     con.commit()
     con.close()
 

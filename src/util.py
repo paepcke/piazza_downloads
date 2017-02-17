@@ -11,6 +11,18 @@ def print_records(records):
         result.append((rec['history'][0]['uid'],rec['tags']))
     return result
 
+def get_nodes_and_edges(path):
+    weighted_edges = set()
+    nodes = set()
+    with open(path) as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            #print row
+            nodes.add(row[0])
+            edge_tuple = (row[0],row[1],int(row[2]))
+            if edge_tuple[2]!=0:
+                weighted_edges.add(edge_tuple)
+    return nodes,weighted_edges
 def get_greater_than(fields,values):
     query = '{'
 
@@ -56,7 +68,7 @@ def convertToEdgeList(directory):
     fieldnames = ['user1', 'user2','num_interactions']
     writer = csv.DictWriter(open(out_file,'w'), fieldnames=fieldnames)
 
-    writer.writeheader()
+    #writer.writeheader()
     for key in user_edges:
         writer.writerow({'user1': key[0], 'user2': key[1],'num_interactions':user_edges[key]})
     with open(not_found_file,'w') as nf:
@@ -68,9 +80,40 @@ def convertToEdgeList(directory):
     print '# users: ', len(users)
     print '# not found:',len(notfound)
 
-DATA_DIRECTORY = '../data/cs229/'
-for root, dirs, files in os.walk(DATA_DIRECTORY):
-    for dir in dirs:
-        convertToEdgeList(root+dir)
+
+def process_into_csv_for_grades(directory, out_file, catalog_nbr, subject, year, quarter):
+    content_file = directory + '/class_content.json'
+    users_file = directory + '/users.json'
+
+    data = open(users_file, 'r')
+    parsed = json.load(data)
+
+    for rec in parsed:
+        # print rec['name'],
+        # print rec['email'],
+        # print subject,
+        # print catalog_nbr,
+        # print quarter,
+        # print year,
+        # print rec['user_id']
+        writer.writerow({'name':str(rec['name'].encode('utf-8').strip()), 'email':rec['email'], 'subject':subject,'catalog_nbr': catalog_nbr, 'quarter':quarter, 'year':year, 'piazza_id':rec['user_id']})
 
 
+# out_file = '../data/grades_tmp.csv'
+# fieldnames = ['name', 'email','subject','catalog_nbr', 'quarter', 'year', 'piazza_id']
+# writer = csv.DictWriter(open(out_file,'w'), fieldnames=fieldnames)
+# writer.writeheader()
+
+#convertToEdgeList('../data/cs229/fall13')
+if __name__ == "__main__":
+    DATA_DIRECTORY = '../data/cs221/'
+    for root, dirs, files in os.walk(DATA_DIRECTORY):
+        for dir in dirs:
+            # print dir[len(dir)-2:],
+            # print dir[:len(dir)-2]
+            # process_into_csv_for_grades(root+dir, out_file, '229', 'CS', dir[len(dir)-2:], dir[:len(dir)-2])
+            convertToEdgeList(root+dir)
+
+#process_into_csv_for_grades('../data/Fall2012-SOLARONLINE_Solar_Cells_Fuel_Cells_&_Batteries', out_file, '', 'Solar', '2012', 'fall')
+#process_into_csv_for_grades('../data/Summer2015-INTWOMENSHEALTH_International_Womens_Health_&_Human_Rights', out_file, '', 'WomensHealth', '2015', 'summer')
+#process_into_csv_for_grades('../data/Winter2013-PSYCH_035__SYMSYS_100__LINGUIST_144__PHIL_190_Introduction_to_Cognitive_Science', out_file, '35', 'PSYCH', '2013', 'winter')
