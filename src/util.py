@@ -106,13 +106,15 @@ def process_into_csv_for_grades(directory, out_file, catalog_nbr, subject, year,
 
 #convertToEdgeList('../data/cs229/fall13')
 if __name__ == "__main__":
-    DATA_DIRECTORY = '../data/cs221/'
+    DATA_DIRECTORY = '../data/cs231a/'
     for root, dirs, files in os.walk(DATA_DIRECTORY):
         for dir in dirs:
+            print dir[len(dir)-2:]
+            print dir[:len(dir)-2]
             # print dir[len(dir)-2:],
             # print dir[:len(dir)-2]
             # process_into_csv_for_grades(root+dir, out_file, '229', 'CS', dir[len(dir)-2:], dir[:len(dir)-2])
-            convertToEdgeList(root+dir)
+            #convertToEdgeList(root+dir)
 
 #process_into_csv_for_grades('../data/Fall2012-SOLARONLINE_Solar_Cells_Fuel_Cells_&_Batteries', out_file, '', 'Solar', '2012', 'fall')
 #process_into_csv_for_grades('../data/Summer2015-INTWOMENSHEALTH_International_Womens_Health_&_Human_Rights', out_file, '', 'WomensHealth', '2015', 'summer')
