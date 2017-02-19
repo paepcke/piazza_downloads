@@ -125,7 +125,7 @@ def fetch(task):
         os.remove(filename)
     except OSError:
         pass
-    cur.execute("select created,change_log from class_content INTO OUTFILE '{0}'".format(filename))
+    cur.execute("select created,change_log from class_content LIMIT 5,18446744073709551615 INTO OUTFILE '{0}'".format(filename))
     #cur.execute("select created,change_log from class_content INTO OUTFILE '/usr/local/dbout/{0}.txt'".format(task['db_name']))
     con.commit()
     con.close()
