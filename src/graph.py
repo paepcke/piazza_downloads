@@ -130,7 +130,6 @@ def stats(course,divide=False):
                 f_out_sub_student = open(root+dir+'/statistics_student.csv','w')
                 f_out_sub_ins = open(root+dir+'/statistics_instructor.csv','w')
                 print root+dir+'/statistics_student.csv'
-                print root+dir+'/statistics_instructor.csv'
 
                 fieldnames_sub = ['In Degree','Out Degree','Degree','Weighted Degree', 'Pagerank']
                 writer_sub_student = csv.DictWriter(f_out_sub_student, fieldnames=fieldnames_sub)
@@ -139,9 +138,10 @@ def stats(course,divide=False):
                 writer_sub_ins = csv.DictWriter(f_out_sub_ins, fieldnames=fieldnames_sub)
                 writer_sub_ins.writeheader()
 
-                for i in os.listdir(root+dir+'/'):
-                    if os.path.isfile(os.path.join(root+dir+'/',i)) and 'subnetwork' in i:
-                        G_sub =  Graph(root+dir+'/'+i)
+                for i in range(1,20):
+                    if os.path.exists(root+dir+'/subnetwork'+str(i)+'.csv'):
+                        #print root+dir+'/subnetwork'+str(i)+'.csv'
+                        G_sub =  Graph(root+dir+'/subnetwork'+str(i)+'.csv')
 
                         # top students and instructors
                         best_students = [k.keys() for k in best_student_params]
@@ -162,6 +162,9 @@ def stats(course,divide=False):
                         fieldnames_sub[2]:G_sub.best_ins_params[2],
                         fieldnames_sub[3]:G_sub.best_ins_params[3],
                         fieldnames_sub[4]:G_sub.best_ins_params[4]})
+                    else: 
+                        break
+
 
 
 
