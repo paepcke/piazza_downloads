@@ -2,6 +2,7 @@ import json
 import csv
 import ast
 import os
+from constants import *
 
 def print_records(records):
     if records.count()==0: print 'No records found!'
@@ -32,11 +33,10 @@ def get_greater_than(fields,values):
         query+=fields[i]+':{"gt":'+str(values[i])+'},'
     return query+'}'
 
-def convertToEdgeList(directory):
-    print directory
+def convertToEdgeList(directory,name):
     user_file = directory+'/users.json'
-    children_file = directory+'/interactions.txt'
-    out_file = directory+'/result.csv'
+    children_file = directory+'/'+name+'.txt'
+    out_file = directory+'/network.csv'
     not_found_file = directory + '/not_found.txt'
 
     data = open(user_file, 'r')
@@ -49,12 +49,10 @@ def convertToEdgeList(directory):
         for rec2 in parsed:
             user_edges[(rec1['user_id'],rec2['user_id'])] = 0
     with open(children_file, 'rb') as f:
-      #reader = csv.DictReader(csvfile, delimiter='\t', quotechar='|')
       notfound = set()
       for children in f:
-        children = ast.literal_eval(children)
+        children = ast.literal_eval(children.split('\t')[1])
         children = [x for x in children if x is not None]
-        #print children
         
         for i in range(len(children)):
                 for j in range(i,len(children)):
@@ -67,18 +65,13 @@ def convertToEdgeList(directory):
                         user_edges[(children[j],children[i])]+=1
     fieldnames = ['user1', 'user2','num_interactions']
     writer = csv.DictWriter(open(out_file,'w'), fieldnames=fieldnames)
-
-    #writer.writeheader()
     for key in user_edges:
         writer.writerow({'user1': key[0], 'user2': key[1],'num_interactions':user_edges[key]})
     with open(not_found_file,'w') as nf:
          nf.write('\n'.join(str(id) for id in notfound))
-    #print notfound
-    #print user_edges.values()
-    #print user_edges[("i0efktx1sdw4oj","i0efktx1sdw4oj")]
-    print '# edges: ',sum(user_edges.values())
-    print '# users: ', len(users)
-    print '# not found:',len(notfound)
+    # print '# edges: ',sum(user_edges.values())
+    # print '# users: ', len(users)
+    # print '# not found:',len(notfound)
 
 
 def process_into_csv_for_grades(directory, out_file, catalog_nbr, subject, year, quarter):
@@ -89,33 +82,31 @@ def process_into_csv_for_grades(directory, out_file, catalog_nbr, subject, year,
     parsed = json.load(data)
 
     for rec in parsed:
-        # print rec['name'],
-        # print rec['email'],
-        # print subject,
-        # print catalog_nbr,
-        # print quarter,
-        # print year,
-        # print rec['user_id']
         writer.writerow({'name':str(rec['name'].encode('utf-8').strip()), 'email':rec['email'], 'subject':subject,'catalog_nbr': catalog_nbr, 'quarter':quarter, 'year':year, 'piazza_id':rec['user_id']})
 
 
-# out_file = '../data/grades_tmp.csv'
-# fieldnames = ['name', 'email','subject','catalog_nbr', 'quarter', 'year', 'piazza_id']
-# writer = csv.DictWriter(open(out_file,'w'), fieldnames=fieldnames)
-# writer.writeheader()
+def combine_statistics():
+    attributes = ['Nodes', 'Edges','Avg In Degree','Avg Out Degree','Avg Degree','Avg Weighted Degree', 'Density', 'Largest Strongly Connected Component','Largest Weakly Connected Component', 'Average Betweenness Centrality', 'Average Closeness Centrality', 'Average Degree Centrality', 'Average Eigenvector Centrality', 'Average Clustering Coefficient', 'Average Hub Score', 'Average Authority Score', 'Max Pagerank']
 
-#convertToEdgeList('../data/cs229/fall13')
-if __name__ == "__main__":
-    DATA_DIRECTORY = '../data/cs231a/'
-    for root, dirs, files in os.walk(DATA_DIRECTORY):
-        for dir in dirs:
-            print dir[len(dir)-2:]
-            print dir[:len(dir)-2]
-            # print dir[len(dir)-2:],
-            # print dir[:len(dir)-2]
-            # process_into_csv_for_grades(root+dir, out_file, '229', 'CS', dir[len(dir)-2:], dir[:len(dir)-2])
-            #convertToEdgeList(root+dir)
+    for att in attributes:
+        print att+'||',
+        out_file = open(DATA_DIRECTORY+'stats/'+att+'.stats.csv','wb')
+        writer = csv.writer(out_file)
+        writer.writerow(['']+COURSES)
 
-#process_into_csv_for_grades('../data/Fall2012-SOLARONLINE_Solar_Cells_Fuel_Cells_&_Batteries', out_file, '', 'Solar', '2012', 'fall')
-#process_into_csv_for_grades('../data/Summer2015-INTWOMENSHEALTH_International_Womens_Health_&_Human_Rights', out_file, '', 'WomensHealth', '2015', 'summer')
-#process_into_csv_for_grades('../data/Winter2013-PSYCH_035__SYMSYS_100__LINGUIST_144__PHIL_190_Introduction_to_Cognitive_Science', out_file, '35', 'PSYCH', '2013', 'winter')
+        dictnodes = {'FALL11':[],'FALL12':[],'SUMMER13':[],'FALL13':[],'WINTER14':[],'SPRING14':[],'FALL14':[],'WINTER15':[],'FALL15':[],'SPRING16':[],'FALL16':[]}
+
+        #COURSES = ['cs229']
+        counter = 0
+        for course in COURSES:
+                counter+=1
+                path = DATA_DIRECTORY+course
+                #print course
+                f_stats = open(path+'/statistics.csv','r')
+                reader = csv.DictReader(f_stats)
+                for row in reader:
+                    dictnodes[row['Course']].append(row[att])
+                for key in dictnodes:
+                   if len(dictnodes[key])<counter: dictnodes[key].append(0)
+        for key in dictnodes:
+            writer.writerow([key]+dictnodes[key])

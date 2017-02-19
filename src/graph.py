@@ -4,10 +4,8 @@ import csv
 from networkx.readwrite import json_graph
 from util import *
 from networkx.algorithms.approximation import clique
+from constants import *
 
-DATA_DIRECTORY = '../data/'
-CS229 = 'cs229/'
-CS221 = 'cs221/'
 class Graph:
     def __init__(self,path):
         self.path = path
@@ -48,7 +46,7 @@ class Graph:
         #self.connectivity = self.G.all_pairs_node_connectivity()/float(self.num_nodes)
         #print nx.is_connected(self.H)
         #print nx.diameter(self.G)
-        self.hub,self.auth=nx.hits(self.G)
+        self.hub,self.auth=nx.hits(self.H)
         self.hub = sum(self.hub.values())/float(self.num_nodes)
         self.auth = sum(self.auth.values())/float(self.num_nodes)
         self.max_pagerank = max(nx.pagerank(self.G, alpha=0.9).values())
@@ -91,34 +89,34 @@ print G1.title
 #print 'Eccentricity of graph:',G1.eccentricity
 #G1.write_graph()
 
-f_out = open(DATA_DIRECTORY+CS221+'statistics.csv','w')
-fieldnames = ['Course','Nodes', 'Edges','Avg In Degree','Avg Out Degree','Avg Degree','Avg Weighted Degree', 'Density', 'Largest Strongly Connected Component','Largest Weakly Connected Component', 'Average Betweenness Centrality', 'Average Closeness Centrality', 'Average Degree Centrality', 'Average Eigenvector Centrality', 'Average Clustering Coefficient', 'Average Hub Score', 'Average Authority Score', 'Max Pagerank']
-writer = csv.DictWriter(f_out, fieldnames=fieldnames)
-writer.writeheader()
+def stats(course):
+    f_out = open(DATA_DIRECTORY+course+'/statistics.csv','w')
+    fieldnames = ['Course','Nodes', 'Edges','Avg In Degree','Avg Out Degree','Avg Degree','Avg Weighted Degree', 'Density', 'Largest Strongly Connected Component','Largest Weakly Connected Component', 'Average Betweenness Centrality', 'Average Closeness Centrality', 'Average Degree Centrality', 'Average Eigenvector Centrality', 'Average Clustering Coefficient', 'Average Hub Score', 'Average Authority Score', 'Max Pagerank']
+    writer = csv.DictWriter(f_out, fieldnames=fieldnames)
+    writer.writeheader()
 
-for root, dirs, files in os.walk(DATA_DIRECTORY+CS221):
-    for dir in dirs:
-        G =  Graph(root+dir+'/result.csv')
-        G.get_general_properties()
-        writer.writerow({fieldnames[0]:G.title,
-            fieldnames[1]:G.num_nodes,
-            fieldnames[2]:G.num_edges,
-            fieldnames[3]:G.in_degree,
-            fieldnames[4]:G.out_degree,
-            fieldnames[5]:G.degree,
-            fieldnames[6]:G.weighted_degree,
-            fieldnames[7]:G.density,
-            fieldnames[8]:G.scc,
-            fieldnames[9]:G.wcc,
-            fieldnames[10]:G.betweenness_centrality,
-            fieldnames[11]:G.closeness_centrality,
-            fieldnames[12]:G.degree_centrality,
-            fieldnames[13]:G.eigenvector_centrality,
-            fieldnames[14]:G.clustering_coeff,
-            fieldnames[15]:G.hub,
-            fieldnames[16]:G.auth,
-            fieldnames[17]:G.max_pagerank})
-        print G.title
+    for root, dirs, files in os.walk(DATA_DIRECTORY+course+'/'):
+        for dir in dirs:
+            G =  Graph(root+dir+'/network.csv')
+            G.get_general_properties()
+            writer.writerow({fieldnames[0]:G.title,
+                fieldnames[1]:G.num_nodes,
+                fieldnames[2]:G.num_edges,
+                fieldnames[3]:G.in_degree,
+                fieldnames[4]:G.out_degree,
+                fieldnames[5]:G.degree,
+                fieldnames[6]:G.weighted_degree,
+                fieldnames[7]:G.density,
+                fieldnames[8]:G.scc,
+                fieldnames[9]:G.wcc,
+                fieldnames[10]:G.betweenness_centrality,
+                fieldnames[11]:G.closeness_centrality,
+                fieldnames[12]:G.degree_centrality,
+                fieldnames[13]:G.eigenvector_centrality,
+                fieldnames[14]:G.clustering_coeff,
+                fieldnames[15]:G.hub,
+                fieldnames[16]:G.auth,
+                fieldnames[17]:G.max_pagerank})
 
 
 

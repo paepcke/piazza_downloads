@@ -2,6 +2,7 @@ import MySQLdb as mdb
 from datetime import datetime
 import json, time
 import os
+from constants import *
 
 '''
 Takes paths containing users.json and class_content.json for class exports, and generates corresponding MySQL databases containing forum post data.
@@ -11,50 +12,24 @@ For each class, a database with two tables is created:
 1- 'users' table
 2- 'class_content' table: containing forum post metadata. A special 'is_root' column has been added. This is to help conveniently index root posts (that is, posts that are not answers, ... etc to other posts).
 
-Please edit 'tasks' and 'db_params' below.
+Please edit 'tasks' and 'DB_PARAMS' below.
 Tasks is a list where each item is a dict with two keys: input, and db_name
 'input' must be a path to a folder containing users.json and class_content.json files for a class.
 'db_name' is the name of the database to which the data will be loaded.
 '''
-
-db_params = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': ''
-}
-
-
-
-tasks = [
- # {'input': '../data/cs229/fall11/', 'db_name': 'fall11'},
- # {'input': '../data/cs229/fall12/', 'db_name': 'fall12'},
- # {'input': '../data/cs229/fall13/', 'db_name': 'fall13'},
- # {'input': '../data/cs229/fall14/', 'db_name': 'fall14'},
- # {'input': '../data/cs229/fall15/', 'db_name': 'fall15'},
- # {'input': '../data/cs229/fall16/', 'db_name': 'fall16'},
- # {'input': '../data/cs229/spring16/', 'db_name': 'spring16'},
- #{'input': '../data/cs221/fall12/', 'db_name': 'cs221fall12'}
-]
-
-DATA_DIRECTORY = '../data/solar/'
-for root, dirs, files in os.walk(DATA_DIRECTORY):
-    for dir in dirs:
-        k  = DATA_DIRECTORY.split('/')[-2]
-        tasks.append({'input':root+dir+'/','db_name':k+dir})
-
-print tasks
-
-def main(task):
-    print task['db_name']
+def fetch(task):
+    #print task['db_name']
     # Connect to the database using the specified parameters
-    con = mdb.connect(db_params['host'], db_params['user'], db_params['password'])
+    con = mdb.connect(DB_PARAMS['host'], DB_PARAMS['user'], DB_PARAMS['password'])
     cur = con.cursor(mdb.cursors.DictCursor)
 
     # Create the database. Overwrites any existing instance.
     q = "DROP DATABASE IF EXISTS {0};".format(task['db_name'])
-    cur.execute(q)
+    try:
+        cur.execute(q)
+    except:
+        pass
     
-
     q = "CREATE DATABASE {0};".format(task['db_name'])
     cur.execute(q)
 
@@ -144,8 +119,14 @@ def main(task):
             )
             #print q
             cur.execute(q)
-    
-    cur.execute("select change_log from class_content INTO OUTFILE '/usr/local/dbout/{0}.txt'".format(task['db_name']))
+    filename = os.getcwd()[:-3]+task['input'][3:]+task['db_name']+'.txt'
+    #print filename
+    try:
+        os.remove(filename)
+    except OSError:
+        pass
+    cur.execute("select created,change_log from class_content INTO OUTFILE '{0}'".format(filename))
+    #cur.execute("select created,change_log from class_content INTO OUTFILE '/usr/local/dbout/{0}.txt'".format(task['db_name']))
     con.commit()
     con.close()
 
@@ -178,9 +159,4 @@ def ChildTreeToList(x):
 
     for c in x['children']:
         list.extend(ChildTreeToList(c))
-
     return list
-
-
-for task in tasks:
-    main(task)
