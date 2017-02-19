@@ -164,15 +164,3 @@ def stats(course,divide=False):
                         fieldnames_sub[4]:G_sub.best_ins_params[4]})
                     else: 
                         break
-
-
-
-
-
-
-
-
-
-
-
-

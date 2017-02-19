@@ -36,8 +36,6 @@ def fetch(task):
     q = "USE {0};".format(task['db_name'])
     cur.execute(q)
 
-
-
     ## Create the users table
     ##########################
 
