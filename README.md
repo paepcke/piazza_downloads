@@ -1,9 +1,13 @@
+# Predicting student performance based on Piazza student interaction network analysis
 -------------------------------------------------------------------------------------------------------------------------
 * Run main.py to generate networks from JSON files and get various statistics.
 
 * piazza/data folder should look like this:
     *******************************
+       ```
 	piazza/data
+	```
+		
 		course1
 			fall11
 				class_content.json
