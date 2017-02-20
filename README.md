@@ -38,4 +38,5 @@
 				class_content.json
 				users.json
 	******************************
-	
+
+(where course1,course2,etc. are course names as defined in src/constants.py)
