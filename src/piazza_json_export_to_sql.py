@@ -1,9 +1,3 @@
-import MySQLdb as mdb
-from datetime import datetime
-import json, time
-import os
-from constants import *
-
 '''
 Takes paths containing users.json and class_content.json for class exports, and generates corresponding MySQL databases containing forum post data.
 Note that not all post metadata is created in the databases. However, the essential requirements for analytics (who posted what when, which tags, ... etc) are taken care of.
@@ -17,6 +11,17 @@ Tasks is a list where each item is a dict with two keys: input, and db_name
 'input' must be a path to a folder containing users.json and class_content.json files for a class.
 'db_name' is the name of the database to which the data will be loaded.
 '''
+
+from datetime import datetime
+import json, time
+import os
+import shutil
+import tempfile
+
+import MySQLdb as mdb
+from constants import *
+
+
 def fetch(task):
     #print task['db_name']
     # Connect to the database using the specified parameters
@@ -118,15 +123,25 @@ def fetch(task):
             #print q
             cur.execute(q)
     filename = os.getcwd()[:-3]+task['input'][3:]+task['db_name']+'.txt'
+    mysql_out_file_obj = tempfile.NamedTemporaryFile(dir='/tmp', prefix=task['db_name'])
+    # Close the file to make it not exist, but
+    # use its unique name below. Not good practice
+    # because there could be race conditions with
+    # other programs asking for a temp file and
+    # getting the exact one before MySQL can write
+    # to it. But in our situation it's OK:
+    mysql_out_file_obj.close()
     #print filename
     try:
         os.remove(filename)
     except OSError:
         pass
-    cur.execute("select created,change_log from class_content LIMIT 5,18446744073709551615 INTO OUTFILE '{0}'".format(filename))
+    cur.execute("select created,change_log from class_content LIMIT 5,18446744073709551615 INTO OUTFILE '{0}'".format(mysql_out_file_obj.name))
+    #cur.execute("select created,change_log from class_content LIMIT 5,18446744073709551615 INTO OUTFILE '{0}'".format(filename))
     #cur.execute("select created,change_log from class_content INTO OUTFILE '/usr/local/dbout/{0}.txt'".format(task['db_name']))
     con.commit()
     con.close()
+    shutil.copyfile(mysql_out_file_obj.name, filename)
 
 def ChildTreeToList(x):
     tc = x['created']
@@ -134,11 +149,11 @@ def ChildTreeToList(x):
     if 'uid' not in x.keys():
         x['uid'] = 'None'
 
-    list = []
+    child_list = []
 
     if 'anon' in x.keys():
         #print x['children']
-        list.append({
+        child_list.append({
             'id': x['id'],
             'type': x['type'],
             'created': time.mktime(dt.timetuple()),
@@ -156,5 +171,5 @@ def ChildTreeToList(x):
         })
 
     for c in x['children']:
-        list.extend(ChildTreeToList(c))
-    return list
+        child_list.extend(ChildTreeToList(c))
+    return child_list

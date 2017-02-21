@@ -31,10 +31,10 @@ def create(subdir,filepath):
 
 def main():
     for subdir, dirs, files in os.walk(DATA_DIRECTORY):
-        for file in files:
-            filepath = subdir + os.sep + file
+        for class_file in files:
+            filepath = subdir + os.sep + class_file
 
-            if file=='users.json':
+            if class_file=='users.json':
                 print (filepath)
                 create(subdir,filepath)
 main()

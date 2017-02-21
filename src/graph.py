@@ -103,9 +103,9 @@ def stats(course,divide=False):
     writer.writeheader()
 
     for root, dirs, files in os.walk(DATA_DIRECTORY+course+'/'):
-        for dir in dirs:
-            G =  Graph(root+dir+'/network.csv')
-            instructors, students = identify_instructors(root+dir)
+        for course_dir in dirs:
+            G =  Graph(root+course_dir+'/network.csv')
+            instructors, students = identify_instructors(root+course_dir)
             best_student_params, best_ins_params = G.get_general_properties(students=students,instructors=instructors)
 
             writer.writerow({fieldnames[0]:G.title,
@@ -127,9 +127,9 @@ def stats(course,divide=False):
                 fieldnames[16]:G.auth,
                 fieldnames[17]:G.max_pagerank})
             if divide:
-                f_out_sub_student = open(root+dir+'/statistics_student.csv','w')
-                f_out_sub_ins = open(root+dir+'/statistics_instructor.csv','w')
-                print root+dir+'/statistics_student.csv'
+                f_out_sub_student = open(root+course_dir+'/statistics_student.csv','w')
+                f_out_sub_ins = open(root+course_dir+'/statistics_instructor.csv','w')
+                print root+course_dir+'/statistics_student.csv'
 
                 fieldnames_sub = ['In Degree','Out Degree','Degree','Weighted Degree', 'Pagerank']
                 writer_sub_student = csv.DictWriter(f_out_sub_student, fieldnames=fieldnames_sub)
@@ -139,9 +139,9 @@ def stats(course,divide=False):
                 writer_sub_ins.writeheader()
 
                 for i in range(1,20):
-                    if os.path.exists(root+dir+'/subnetwork'+str(i)+'.csv'):
-                        #print root+dir+'/subnetwork'+str(i)+'.csv'
-                        G_sub =  Graph(root+dir+'/subnetwork'+str(i)+'.csv')
+                    if os.path.exists(root+course_dir+'/subnetwork'+str(i)+'.csv'):
+                        #print root+course_dir+'/subnetwork'+str(i)+'.csv'
+                        G_sub =  Graph(root+course_dir+'/subnetwork'+str(i)+'.csv')
 
                         # top students and instructors
                         best_students = [k.keys() for k in best_student_params]

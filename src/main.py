@@ -1,8 +1,3 @@
-from util import *
-from piazza_json_export_to_sql import *
-from graph import *
-import progressbar
-
 '''
 This file executed all functions for processing of courses - cleaning data, inserting into mysql database,
 fetching required records and converting them into a network (under 'network.csv' in each course for all their
@@ -14,13 +9,22 @@ for each network parameter, stored as '{attribute_name}'.csv in data/stats).
 All constants are defined in 'constants.py'.
 '''
 
+import getpass
+
+import progressbar
+
+from graph import *
+from piazza_json_export_to_sql import *
+from util import *
+
+
 def main(getStats = False, combine = False):
     print 'Fetching records from sql..'
     tasks = []
     for c in COURSES:
         for root, dirs, files in os.walk(DATA_DIRECTORY+c+'/'):
-            for dir in dirs:
-                tasks.append({'input':root+dir+'/','db_name':c+dir})
+            for course_dir in dirs:
+                tasks.append({'input':root+course_dir+'/','db_name':c+course_dir})
     bar = progressbar.ProgressBar(maxval=len(tasks), \
     widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
     bar.start()
@@ -35,8 +39,8 @@ def main(getStats = False, combine = False):
         print course
         path = DATA_DIRECTORY+course
         for root, dirs, files in os.walk(path):
-            for dir in dirs:
-                convertToEdgeList(root+'/'+dir,course+dir,True)
+            for course_dir in dirs:
+                convertToEdgeList(root+'/'+course_dir,course+course_dir,True)
         if getStats: 
             print 'Calculating statistics for',course
             stats(course,True)
@@ -44,4 +48,10 @@ def main(getStats = False, combine = False):
         print 'Combining stats for all courses------------------------------------------'
         combine_statistics()
 
-main(True,False)
+if __name__ == '__main__':
+  pwd = DB_PARAMS.get('password', None)
+  if pwd is None:
+    DB_PARAMS['password'] = ''
+  elif len(DB_PARAMS['password']) == 0:
+    DB_PARAMS['password'] = getpass.getpass('MySQL password for user {0}:'.format(DB_PARAMS['user'])) 
+  main(True,False)
