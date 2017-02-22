@@ -46,23 +46,23 @@ class Graph:
         #self.connectivity = self.G.all_pairs_node_connectivity()/float(self.num_nodes)
         #print nx.is_connected(self.H)
         #print nx.diameter(self.G)
-        self.hub,self.auth=nx.hits(self.H,max_iter=300)
-        self.hub = sum(self.hub.values())/float(self.num_nodes)
-        self.auth = sum(self.auth.values())/float(self.num_nodes)
+        #self.hub,self.auth=nx.hits(self.H,max_iter=1000)
+        #self.hub = sum(self.hub.values())/float(self.num_nodes)
+        #self.auth = sum(self.auth.values())/float(self.num_nodes)
         self.max_pagerank = max(nx.pagerank(self.G, alpha=0.9).values())
 
         self.best_student_params = None
         self.best_ins_params = None
 
         if sub:
-            self.best_student_params = find_average(best_students,[self.G.in_degree(),self.G.out_degree(),self.G.degree(),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)])
-            self.best_ins_params = find_average(best_instructors,[self.G.in_degree(),self.G.out_degree(),self.G.degree(),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)])
+            self.best_student_params = find_average(best_students,[self.G.in_degree(weight='weight'),self.G.out_degree(weight='weight'),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)])
+            self.best_ins_params = find_average(best_instructors,[self.G.in_degree(weight='weight'),self.G.out_degree(weight='weight'),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)])
         if not sub:
             # calculation for parameters for best students, taking top 10 students
-            best_indeg_student,best_outdeg_student,best_deg_student,best_weighteddeg_student,best_pagerank_student = get_best_parameters(students, 10, [self.G.in_degree(),self.G.out_degree(),self.G.degree(),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)])
+            best_indeg_student,best_outdeg_student,best_weighteddeg_student,best_pagerank_student = get_best_parameters(students, 10, [self.G.in_degree(weight='weight'),self.G.out_degree(weight='weight'),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)])
             # calculation for parameters for best instructors, taking top 2 instructors
-            best_indeg_ins,best_outdeg_ins,best_deg_ins,best_weighteddeg_ins,best_pagerank_ins = get_best_parameters(instructors, 2, [self.G.in_degree(),self.G.out_degree(),self.G.degree(),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)])
-            return [best_indeg_student,best_outdeg_student,best_deg_student,best_weighteddeg_student,best_pagerank_student],[best_indeg_ins,best_outdeg_ins,best_deg_ins,best_weighteddeg_ins,best_pagerank_ins]
+            best_indeg_ins,best_outdeg_ins,best_weighteddeg_ins,best_pagerank_ins = get_best_parameters(instructors, 2, [self.G.in_degree(weight='weight'),self.G.out_degree(weight='weight'),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)])
+            return [best_indeg_student,best_outdeg_student,best_weighteddeg_student,best_pagerank_student],[best_indeg_ins,best_outdeg_ins,best_weighteddeg_ins,best_pagerank_ins]
 
     def write_graph(self):
         new_file = self.path[:len(self.path)-len(self.path.split('/')[-1])]+'graph.graphml'
@@ -123,15 +123,15 @@ def stats(course,divide=False):
                 fieldnames[12]:G.degree_centrality,
                 fieldnames[13]:G.eigenvector_centrality,
                 fieldnames[14]:G.clustering_coeff,
-                fieldnames[15]:G.hub,
-                fieldnames[16]:G.auth,
-                fieldnames[17]:G.max_pagerank})
+                fieldnames[15]:0,#G.hub,
+                fieldnames[16]:0,#G.auth,
+                fieldnames[15]:G.max_pagerank})
             if divide:
                 f_out_sub_student = open(root+course_dir+'/statistics_student.csv','w')
                 f_out_sub_ins = open(root+course_dir+'/statistics_instructor.csv','w')
                 print root+course_dir+'/statistics_student.csv'
 
-                fieldnames_sub = ['In Degree','Out Degree','Degree','Weighted Degree', 'Pagerank']
+                fieldnames_sub = ['Week','Weighted In Degree','Weighted Out Degree','Weighted Degree', 'Pagerank']
                 writer_sub_student = csv.DictWriter(f_out_sub_student, fieldnames=fieldnames_sub)
                 writer_sub_student.writeheader()
 
@@ -150,17 +150,19 @@ def stats(course,divide=False):
                         G_sub.get_general_properties(best_students=best_students,best_instructors=best_instructors,sub=True)
 
                         writer_sub_student.writerow({
-                        fieldnames_sub[0]:G_sub.best_student_params[0],
-                        fieldnames_sub[1]:G_sub.best_student_params[1],
-                        fieldnames_sub[2]:G_sub.best_student_params[2],
-                        fieldnames_sub[3]:G_sub.best_student_params[3],
-                        fieldnames_sub[4]:G_sub.best_student_params[4]})
+                        fieldnames_sub[0]: i,
+                        fieldnames_sub[1]:G_sub.best_student_params[0],
+                        fieldnames_sub[2]:G_sub.best_student_params[1],
+                        fieldnames_sub[3]:G_sub.best_student_params[2],
+                        fieldnames_sub[4]:G_sub.best_student_params[3]
+                        })
 
                         writer_sub_ins.writerow({
-                        fieldnames_sub[0]:G_sub.best_ins_params[0],
-                        fieldnames_sub[1]:G_sub.best_ins_params[1],
-                        fieldnames_sub[2]:G_sub.best_ins_params[2],
-                        fieldnames_sub[3]:G_sub.best_ins_params[3],
-                        fieldnames_sub[4]:G_sub.best_ins_params[4]})
+                        fieldnames_sub[0]: i,
+                        fieldnames_sub[1]:G_sub.best_ins_params[0],
+                        fieldnames_sub[2]:G_sub.best_ins_params[1],
+                        fieldnames_sub[3]:G_sub.best_ins_params[2],
+                        fieldnames_sub[4]:G_sub.best_ins_params[3]
+                        })
                     else: 
                         break
