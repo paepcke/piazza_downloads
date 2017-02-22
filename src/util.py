@@ -213,7 +213,7 @@ def plot_weekly_change_in_parameter(directory, parameter,ax):
 
     ax.plot(weeks,x,'o')
     ax.plot(weeks,y_new,label=str(directory.split('/')[3]))
-    pylab.title(str(directory.split('/')[2])+' Polynomial Fit for '+parameter)
+    pylab.title(str(directory.split('/')[2])+' Polynomial Fit for '+parameter+ ' for top 10 students')
     plt.xlabel('Week #')
     plt.ylabel(parameter)
     ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=13)
@@ -241,4 +241,4 @@ if __name__ == "__main__":
             for root, dirs, files in os.walk(DATA_DIRECTORY+course+'/'):
                 for dir in dirs:
                     print root+dir
-                    plot_weekly_change_in_parameter(root+dir,'Pagerank',ax)
+                    plot_weekly_change_in_parameter(root+dir,'Degree',ax)
