@@ -2,11 +2,14 @@ import json
 import csv
 import ast
 import os
+import operator
+import numpy as np
 from constants import *
 from datetime import *
-import operator
 import matplotlib.pyplot as plt
-import numpy as np
+from matplotlib import pylab
+import plotly.plotly as py
+import plotly.graph_objs as go
 
 def print_records(records):
     if records.count()==0: print 'No records found!'
@@ -181,30 +184,61 @@ def combine_statistics():
             writer.writerow([key]+dictnodes[key])
 
 
-def plot_weekly_change_in_parameter(directory, parameter):
-    student_statistics = directory + '/statistics_students.csv'
+def plot_weekly_change_in_parameter(directory, parameter,ax):
+    student_statistics = directory + '/statistics_student.csv'
 
     f_student = open(student_statistics,'r')
     reader = csv.reader(f_student)
+    next(reader, None)
     weeks = 1
-    pageranks = []
-    weighted_degrees = []
-    for row in reader:
+    x = []
+    data = list(reader)
+    if len(data)<3: 
+        return
+    for row in data:
         _,_,_,deg,pagerank = row
-        weighted_degrees.append(deg)
-        pageranks.append(pagerank)
+
+        if parameter=='Degree': 
+            x.append(float(deg))
+        elif parameter=='Pagerank':
+            x.append(float(pagerank))
         weeks+=1
     weeks = range(1,weeks)
-    polynomial = np.polyfit(weeks,pageranks,2)
+    # print 'X: ',weeks
+    # print 'Y: ',pageranks
+    z = np.polyfit(weeks,x,3)
+    f = np.poly1d(z)
+    y_new = f(weeks)
+    #plt.clf()
 
+    ax.plot(weeks,x,'o')
+    ax.plot(weeks,y_new,label=str(directory.split('/')[3]))
+    pylab.title(str(directory.split('/')[2])+' Polynomial Fit for '+parameter)
+    plt.xlabel('Week #')
+    plt.ylabel(parameter)
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=13)
+    # ax = plt.gca()
+    # ax.set_axis_bgcolor((0.898, 0.898, 0.898))
+    # fig = plt.gcf()
+    print str(directory.split('/')[2])+' Polynomial Fit for '+parameter
 
-
+    out_directory = '../figures/'+str(directory.split('/')[2])
+    if not os.path.exists(out_directory):
+        os.makedirs(out_directory)
+    plt.savefig('../figures/'+str(directory.split('/')[2])+'/'+'polyfit_'+parameter+'_'+str(directory.split('/')[3])+'.png')
+    #py.plot_mpl(fig, filename=directory)
+    #plt.show()
 
 
 if __name__ == "__main__":
     for course in COURSES:
             print course
+            fig = plt.figure()
+            ax = plt.subplot(111)
+            box = ax.get_position()
+            ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+            
             for root, dirs, files in os.walk(DATA_DIRECTORY+course+'/'):
                 for dir in dirs:
-                    print dir
-                    identify_instructors(DATA_DIRECTORY+root+dir)
+                    print root+dir
+                    plot_weekly_change_in_parameter(root+dir,'Pagerank',ax)
