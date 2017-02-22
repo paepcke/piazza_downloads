@@ -12,8 +12,12 @@ setup(
     setup_requires   = ['nose>=1.1.2'],
     tests_require    = test_requirements,
     install_requires = ['MySQL-python>=1.2.5', 
-			'networkx>=1.11',
+			             'networkx>=1.11',
                         'progressbar>=2.3',
+                        'plotly>=2.0.2',
+                        'matplotlib>=1.5.3',
+                        'numpy>=1.11.1'
+
 			] + test_requirements,
 
     package_data = {

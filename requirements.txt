@@ -1,2 +1,5 @@
 networkx==1.11
 progressbar==2.3
+matplotlib==1.5.3
+numpy==1.11.1
+plotly==2.0.2
