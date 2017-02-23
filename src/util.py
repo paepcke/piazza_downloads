@@ -7,6 +7,7 @@ import operator
 import os
 import plotly.graph_objs as go
 import plotly.plotly as py
+import statistics
 
 from constants import *
 from datetime import *
@@ -26,7 +27,6 @@ def get_nodes_and_edges(path):
     with open(path) as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            #print row
             nodes.add(row[0])
             edge_tuple = (row[0],row[1],int(row[2]))
             if edge_tuple[2]!=0:
@@ -75,6 +75,14 @@ def find_average(subset,parameters):
     sum([parameters[1][k] for k in subset[1]])/float(len(subset[1])),
     sum([parameters[2][k] for k in subset[2]])/float(len(subset[2])),
     sum([parameters[3][k] for k in subset[3]])/float(len(subset[3])),
+    ]
+
+def find_median(subset,parameters):
+    return[
+        statistics.median([parameters[0][k] for k in subset[0]]),
+        statistics.median([parameters[1][k] for k in subset[1]]),
+        statistics.median([parameters[2][k] for k in subset[2]]),
+        statistics.median([parameters[3][k] for k in subset[3]]),
     ]
 
 '''
@@ -191,6 +199,7 @@ def convertToEdgeList(directory,name,divide=False):
             flag=True
             num_week+=1 
     # writes the final network file  
+    print out_file
     write_network_to_file(out_file,user_edges,not_found_file,notfound)
 
 def process_into_csv_for_grades(directory, out_file, catalog_nbr, subject, year, quarter):
@@ -263,15 +272,22 @@ Output
 '''
 def plot_weekly_change_in_parameter(directory, parameter,ax):
     weeks = 1
-    x = []
+    y1 = []
+    y2 = []
 
-    student_statistics = directory + '/statistics_student.csv'
-    f_student = open(student_statistics,'r')
-    reader = csv.reader(f_student)
+    top_student_statistics = directory + '/top_statistics_student.csv'
+    median_student_statistics = directory + '/median_statistics_student.csv'
+
+    f_top_students = open(top_student_statistics,'r')
+    f_median_students = open(median_student_statistics,'r')
+
+    reader1 = csv.reader(f_top_students)
+    reader2 = csv.reader(f_median_students)
 
     # Skipping the header of the csv file
-    next(reader, None)
-    data = list(reader)
+    next(reader1, None)
+    next(reader2,None)
+    data = list(reader1)
 
     # Returning if csv is empty
     if len(data)<3: 
@@ -280,44 +296,70 @@ def plot_weekly_change_in_parameter(directory, parameter,ax):
     for row in data:
         _,_,_,deg,pagerank = row
         if parameter=='Degree': 
-            x.append(float(deg))
+            y1.append(float(deg))
         elif parameter=='Pagerank':
-            x.append(float(pagerank))
+            y1.append(float(pagerank))
         weeks+=1
     weeks = range(1,weeks)
-    
+
+    for row in reader2:
+        _,_,_,deg,pagerank = row
+        if parameter=='Degree': 
+            y2.append(float(deg))
+        elif parameter=='Pagerank':
+            y2.append(float(pagerank))
+
     # Calculates a 3rd degree polynomial fit
-    z = np.polyfit(weeks,x,3)
+    z = np.polyfit(weeks,y1,3)
     f = np.poly1d(z)
-    y_new = f(weeks)
+    y1_new = f(weeks)
     #plt.clf()
+    fig = plt.figure()
+    ax = plt.subplot(111)
+
+    '''
+    # For positioning legend outside the plot on right
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=13)
+    '''
+
+    # For positioning legend at the bottom of the plot
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.1,
+                     box.width, box.height * 0.9])
     
     # Plotting everything
-    ax.plot(weeks,x,'o')
-    ax.plot(weeks,y_new,label=str(directory.split('/')[3]))
-    pylab.title(str(directory.split('/')[2])+' Polynomial Fit for '+parameter+ ' for top 10 students')
+    ax.plot(weeks,y1,'o',label='top 10 students')
+    #ax.plot(weeks,y1_new,label=str(directory.split('/')[3]))
+    ax.plot(weeks,y1_new,label='top 10 students polynomial best fit')
+    ax.plot(weeks,y2,label='median of rest of the students')
+    #pylab.title(str(directory.split('/')[2])+' Polynomial Fit for '+parameter+ ' for top 10 students')
+    pylab.title(str(directory.split('/')[2])+str(directory.split('/')[3])+' '+ parameter+'\n Comparison between best-value trend and median for students in the course')
+
+    
     plt.xlabel('Week #')
     plt.ylabel(parameter)
-    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=13)
+    
+    # Put a legend below current axis
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+              fancybox=True, shadow=True, ncol=5,fontsize=11)
+  
 
-    print str(directory.split('/')[2])+' Polynomial Fit for '+parameter
+    print str(directory.split('/')[2])+' Comparison for '+parameter
     
 
     # Saving the plot to piazza/figures
     out_directory = '../figures/'+str(directory.split('/')[2])
     if not os.path.exists(out_directory):
         os.makedirs(out_directory)
-    plt.savefig('../figures/'+str(directory.split('/')[2])+'/'+'polyfit_'+parameter+'_'+str(directory.split('/')[3])+'.png')
+    plt.savefig('../figures/'+str(directory.split('/')[2])+'/'+'comparison_'+parameter+'_'+str(directory.split('/')[3])+'.png')
 
 if __name__ == "__main__":
     for course in COURSES:
-            print course
-            fig = plt.figure()
-            ax = plt.subplot(111)
-            box = ax.get_position()
-            ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-            
-            for root, dirs, files in os.walk(DATA_DIRECTORY+course+'/'):
+            print course    
+            for root, dirs, files in os.walk('../stats/'+course+'/'):
                 for dir in dirs:
                     print root+dir
-                    plot_weekly_change_in_parameter(root+dir,'Degree',ax)
+                    plot_weekly_change_in_parameter(root+dir,'Pagerank',None)
+                    plot_weekly_change_in_parameter(root+dir,'Degree',None)

@@ -41,7 +41,7 @@ class Graph:
         for u, v, d in self.G.edges_iter(data=True):
             self.H[u][v]['weight'] += d['weight']
 
-    def get_general_properties(self,best_students=None,best_instructors=None,students=None,instructors=None,sub=False):
+    def get_general_properties(self,best_students=None,best_instructors=None,students=None,instructors=None,sub=False,rest_students=None, rest_instructors=None):
         self.num_nodes =  self.G.number_of_nodes()
         self.num_edges =  self.G.number_of_edges()
         self.density =  nx.density(self.G)
@@ -71,14 +71,19 @@ class Graph:
         self.best_student_params = None
         self.best_ins_params = None
 
+        param_list =[self.G.in_degree(weight='weight'),self.G.out_degree(weight='weight'),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)]
+         
+
         if sub:
-            self.best_student_params = find_average(best_students,[self.G.in_degree(weight='weight'),self.G.out_degree(weight='weight'),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)])
-            self.best_ins_params = find_average(best_instructors,[self.G.in_degree(weight='weight'),self.G.out_degree(weight='weight'),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)])
+            self.best_student_params = find_average(best_students,param_list)
+            self.best_ins_params = find_average(best_instructors,param_list)
+            self.student_median = find_median(rest_students,param_list)
+
         if not sub:
             # calculation for parameters for best students, taking top 10 students
-            best_indeg_student,best_outdeg_student,best_weighteddeg_student,best_pagerank_student = get_best_parameters(students, 10, [self.G.in_degree(weight='weight'),self.G.out_degree(weight='weight'),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)])
+            best_indeg_student,best_outdeg_student,best_weighteddeg_student,best_pagerank_student = get_best_parameters(students, 10, param_list)
             # calculation for parameters for best instructors, taking top 2 instructors
-            best_indeg_ins,best_outdeg_ins,best_weighteddeg_ins,best_pagerank_ins = get_best_parameters(instructors, 2, [self.G.in_degree(weight='weight'),self.G.out_degree(weight='weight'),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)])
+            best_indeg_ins,best_outdeg_ins,best_weighteddeg_ins,best_pagerank_ins = get_best_parameters(instructors, 2, param_list)
             return [best_indeg_student,best_outdeg_student,best_weighteddeg_student,best_pagerank_student],[best_indeg_ins,best_outdeg_ins,best_weighteddeg_ins,best_pagerank_ins]
 
     def write_graph(self):
@@ -114,7 +119,9 @@ print G1.title
 '''
 
 def stats(course,divide=False):
-    f_out = open(DATA_DIRECTORY+course+'/statistics.csv','w')
+    if not os.path.exists('../stats/'+course):
+        os.makedirs('../stats/'+course)
+    f_out = open('../stats/'+course+'/statistics.csv','w')
     fieldnames = ['Course','Nodes', 'Edges','Avg In Degree','Avg Out Degree','Avg Degree','Avg Weighted Degree', 'Density', 'Largest Strongly Connected Component','Largest Weakly Connected Component', 'Average Betweenness Centrality', 'Average Closeness Centrality', 'Average Degree Centrality', 'Average Eigenvector Centrality', 'Average Clustering Coefficient', 'Average Hub Score', 'Average Authority Score', 'Max Pagerank']
     writer = csv.DictWriter(f_out, fieldnames=fieldnames)
     writer.writeheader()
@@ -124,6 +131,12 @@ def stats(course,divide=False):
             G =  Graph(root+course_dir+'/network.csv')
             instructors, students = identify_instructors(root+course_dir)
             best_student_params, best_ins_params = G.get_general_properties(students=students,instructors=instructors)
+
+            # top students and instructors
+            best_students = [k.keys() for k in best_student_params]
+            best_instructors = [k.keys() for k in best_ins_params]
+            rest_students = [list(set(students)-set(best_students[i])) for i in range(len(best_students))]
+            rest_instructors = [list(set(instructors)-set(best_instructors[i])) for i in range(len(best_instructors))]
 
             writer.writerow({fieldnames[0]:G.title,
                 fieldnames[1]:G.num_nodes,
@@ -144,9 +157,13 @@ def stats(course,divide=False):
                 fieldnames[16]:0,#G.auth,
                 fieldnames[15]:G.max_pagerank})
             if divide:
-                f_out_sub_student = open(root+course_dir+'/statistics_student.csv','w')
-                f_out_sub_ins = open(root+course_dir+'/statistics_instructor.csv','w')
-                print root+course_dir+'/statistics_student.csv'
+                if not os.path.exists('../stats/'+course+'/'+course_dir):
+                    os.makedirs('../stats/'+course+'/'+course_dir)
+                f_out_sub_student = open('../stats/'+course+'/'+course_dir+'/top_statistics_student.csv','w')
+                f_out_sub_ins = open('../stats/'+course+'/'+course_dir+'/top_statistics_instructor.csv','w')
+                f_out_sub_median_students = open('../stats/'+course+'/'+course_dir+'/median_statistics_student.csv','w')
+                print '../stats/'+course+'/'+course_dir+'/top_statistics_student.csv',
+                print '../stats/'+course+'/'+course_dir+'/median_statistics_student.csv'
 
                 fieldnames_sub = ['Week','Weighted In Degree','Weighted Out Degree','Weighted Degree', 'Pagerank']
                 writer_sub_student = csv.DictWriter(f_out_sub_student, fieldnames=fieldnames_sub)
@@ -155,16 +172,15 @@ def stats(course,divide=False):
                 writer_sub_ins = csv.DictWriter(f_out_sub_ins, fieldnames=fieldnames_sub)
                 writer_sub_ins.writeheader()
 
+                writer_sub_median = csv.DictWriter(f_out_sub_median_students, fieldnames=fieldnames_sub)
+                writer_sub_median.writeheader()
+
                 for i in range(1,20):
                     if os.path.exists(root+course_dir+'/subnetwork'+str(i)+'.csv'):
                         #print root+course_dir+'/subnetwork'+str(i)+'.csv'
                         G_sub =  Graph(root+course_dir+'/subnetwork'+str(i)+'.csv')
 
-                        # top students and instructors
-                        best_students = [k.keys() for k in best_student_params]
-                        best_instructors = [k.keys() for k in best_ins_params]
-
-                        G_sub.get_general_properties(best_students=best_students,best_instructors=best_instructors,sub=True)
+                        G_sub.get_general_properties(best_students=best_students,best_instructors=best_instructors,sub=True, students=students,rest_students=rest_students, rest_instructors=rest_instructors)
 
                         writer_sub_student.writerow({
                         fieldnames_sub[0]: i,
@@ -181,5 +197,14 @@ def stats(course,divide=False):
                         fieldnames_sub[3]:G_sub.best_ins_params[2],
                         fieldnames_sub[4]:G_sub.best_ins_params[3]
                         })
+
+                        writer_sub_median.writerow({
+                        fieldnames_sub[0]: i,
+                        fieldnames_sub[1]:G_sub.student_median[0],
+                        fieldnames_sub[2]:G_sub.student_median[1],
+                        fieldnames_sub[3]:G_sub.student_median[2],
+                        fieldnames_sub[4]:G_sub.student_median[3]
+                        })
+
                     else: 
                         break

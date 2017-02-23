@@ -21,6 +21,8 @@ from util import *
 
 def main(getStats = False, combine = False):
     print 'Fetching records from sql..'
+    if not os.path.exists('stats'):
+        os.makedirs('stats')
     tasks = []
     for c in COURSES:
         for root, dirs, files in os.walk(DATA_DIRECTORY+c+'/'):
@@ -39,9 +41,11 @@ def main(getStats = False, combine = False):
     for course in COURSES:
         print course
         path = DATA_DIRECTORY+course
+        
         for root, dirs, files in os.walk(path):
             for course_dir in dirs:
                 convertToEdgeList(root+'/'+course_dir,course+course_dir,True)
+        
         if getStats: 
             print 'Calculating statistics for',course
             stats(course,True)
