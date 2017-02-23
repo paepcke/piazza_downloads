@@ -1,11 +1,28 @@
-import networkx as nx
-import json
 import csv
+import json
+import networkx as nx
+
+from constants import *
+from networkx.algorithms.approximation import clique
 from networkx.readwrite import json_graph
 from util import *
-from networkx.algorithms.approximation import clique
-from constants import *
 
+'''
+This class creates a network from the edge lists using python Networkx module. 
+It contains attributes and methods related to the network we create.
+We create a directed weighted graph where the nodes are the users enrolled for that course
+on Piazza, edge from A to B implies that A has commented on B's post and the edge weight suggests
+ the total number of comments made by A on B's posts in all posts ever created by B.
+
+Methods
+-------
+    - init(): 
+            The init function initializes the graph. 
+    - get_general_properties(): 
+            Calculates all network parameters
+    - write_graph(): 
+            Writes a network to '.graphml' file for Gephi visualizations
+'''
 class Graph:
     def __init__(self,path):
         self.path = path

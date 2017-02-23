@@ -12,13 +12,15 @@ Tasks is a list where each item is a dict with two keys: input, and db_name
 'db_name' is the name of the database to which the data will be loaded.
 '''
 
-from datetime import datetime
 import json, time
 import os
 import shutil
 import tempfile
 
+from datetime import datetime
+
 import MySQLdb as mdb
+
 from constants import *
 
 

@@ -1,8 +1,9 @@
-import os
-import json
-from pprint import pprint
 import csv
 import io
+import json
+import os
+
+from pprint import pprint
 
 '''
 This file takes in the course directory and parses the 'users.json' in each course offering into 'user_mapping.csv' to 
