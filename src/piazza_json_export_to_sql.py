@@ -96,9 +96,11 @@ def fetch(task):
                         'changelog': json.dumps([c['uid'] if 'uid' in c.keys() else 'None' for c in x['change_log']])
                     })
 
-                # if 'children' in x.keys():
-                #     for c in x['children']:
-                #         nodes.extend(ChildTreeToList(c))
+                if 'children' in x.keys():
+                    for c in x['children']:
+                        ch = ChildTreeToList(c,x['nr'])
+                        if ch:
+                            nodes.extend(ch)
                 return nodes
 
     for x in data:
@@ -126,6 +128,9 @@ def fetch(task):
             cur.execute(q)
     filename = os.getcwd()[:-3]+task['input'][3:]+task['db_name']+'.txt'
     mysql_out_file_obj = tempfile.NamedTemporaryFile(dir='/tmp', prefix=task['db_name'])
+
+    filename1 = os.getcwd()[:-3]+task['input'][3:]+task['db_name']+'post_content.txt'
+    mysql_out_file_obj1 = tempfile.NamedTemporaryFile(dir='/tmp', prefix=task['db_name']+'content')
     # Close the file to make it not exist, but
     # use its unique name below. Not good practice
     # because there could be race conditions with
@@ -133,20 +138,26 @@ def fetch(task):
     # getting the exact one before MySQL can write
     # to it. But in our situation it's OK:
     mysql_out_file_obj.close()
+    mysql_out_file_obj1.close()
     #print filename
     try:
         os.remove(filename)
+        os.remove(filename1)
     except OSError:
         pass
     cur.execute("select created,change_log from class_content LIMIT 5,18446744073709551615 INTO OUTFILE '{0}'".format(mysql_out_file_obj.name))
     #cur.execute("select created,change_log from class_content LIMIT 5,18446744073709551615 INTO OUTFILE '{0}'".format(filename))
     #cur.execute("select created,change_log from class_content INTO OUTFILE '/usr/local/dbout/{0}.txt'".format(task['db_name']))
-    con.commit()
+    cur.execute("select nr,content from class_content INTO OUTFILE '{0}'".format(mysql_out_file_obj1.name))
     con.close()
     shutil.copyfile(mysql_out_file_obj.name, filename)
+    shutil.copyfile(mysql_out_file_obj1.name, filename1)
 
-def ChildTreeToList(x):
-    tc = x['created']
+def ChildTreeToList(x,nr):
+    #print x
+    if 'created' in x:
+        tc = x['created']
+    else: return
     dt = datetime(int(tc[0:4]), int(tc[5:7]), int(tc[8:10]), int(tc[11:13]), int(tc[14:16]), int(tc[17:19]))
     if 'uid' not in x.keys():
         x['uid'] = 'None'
@@ -162,16 +173,16 @@ def ChildTreeToList(x):
             'user_id': x['uid'],
             'anon': x['anon'],
             'subject': '',
-            'content': x['subject'],
+            'content': x['subject'] if 'subject' in x else None,
             'status': '',
-            'nr': 0,
+            'nr': nr,
             'no_answer_followup': 0,
             'tags': json.dumps([]),
-            'children': json.dumps([c['uid'] if 'uid' in c.keys() else 'None' for c in x['children'] ]),
+            'children': None if 'children' not in x else json.dumps([c['uid'] if 'uid' in c.keys() else 'None' for c in x['children'] ]),
             'is_root': 0,
             'changelog':'None'
         })
-
-    for c in x['children']:
-        child_list.extend(ChildTreeToList(c))
+    if 'children' in x:
+        for c in x['children']:
+            child_list.extend(ChildTreeToList(c,nr))
     return child_list

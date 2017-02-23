@@ -33,6 +33,12 @@ def get_nodes_and_edges(path):
                 weighted_edges.add(edge_tuple)
     return nodes,weighted_edges
 
+def process_topics(file):
+    topics = []
+    for line in file:
+        topics.append(line.strip().lower())
+    return topics
+
 def get_greater_than(fields,values):
     query = '{'
     assert len(fields)==len(values)
