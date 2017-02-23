@@ -1,7 +1,8 @@
 '''
-This file executed all functions for processing of courses - cleaning data, inserting into mysql database,
-fetching required records and converting them into a network (under 'network.csv' in each course for all their
-respective offerings in data directory). The function main takes 2 arguments, namely 'getStats' (set True if we 
+This file executes all functions for processing of courses - cleaning data, inserting into mysql database,
+fetching required records, converting them into networks and generating all statisitcs. 
+
+The function main takes 2 arguments, namely 'getStats' (set True if we 
 want to calculate the network statistics for all the courses, stored as 'statistics.csv' under each course 
 offering in data directory) and 'combine'(set True if we want to compare the stats across various courses
 for each network parameter, stored as '{attribute_name}'.csv in data/stats).

@@ -1,10 +1,16 @@
-import json
-import csv
 import ast
+import csv
+import json
+import matplotlib.pyplot as plt
+import numpy as np
+import operator
 import os
+import plotly.graph_objs as go
+import plotly.plotly as py
+
 from constants import *
 from datetime import *
-import operator
+from matplotlib import pylab
 
 def print_records(records):
     if records.count()==0: print 'No records found!'
@@ -26,6 +32,7 @@ def get_nodes_and_edges(path):
             if edge_tuple[2]!=0:
                 weighted_edges.add(edge_tuple)
     return nodes,weighted_edges
+
 def get_greater_than(fields,values):
     query = '{'
     assert len(fields)==len(values)
@@ -33,23 +40,34 @@ def get_greater_than(fields,values):
         query+=fields[i]+':{"gt":'+str(values[i])+'},'
     return query+'}'
 
-def write_network_to_file(out_file,not_found_file,notfound,user_edges):
+def write_network_to_file(out_file,user_edges,not_found_file=None,notfound=0):
     fieldnames = ['user1', 'user2','num_interactions']
     writer = csv.DictWriter(open(out_file,'w'), fieldnames=fieldnames)
     for key in user_edges:
         writer.writerow({'user1': key[0], 'user2': key[1],'num_interactions':user_edges[key]})
-    with open(not_found_file,'w') as nf:
-         nf.write('\n'.join(str(id) for id in notfound))
+    if not_found_file:
+        with open(not_found_file,'w') as nf:
+             nf.write('\n'.join(str(id) for id in notfound))
 
+'''
+Arguments
+---------
+    - subset: list of students or instructors
+    - limit: number of top users we want to retrieve
+    - parameters: list of weighted indegree, weighted outdegree, weighted degree, pagerank
+                  (each of them is a dictionary with key=student, value=parameter)
 
+Returns
+-------
+    - dictionaries of each parameter for top {limit} users with their parameter values (key:user,value:parameter value)
+'''
 def get_best_parameters(subset, limit, parameters):
-    in_degree,out_degree,degree,weighted_degree,pagerank = parameters
+    in_degree,out_degree,weighted_degree,pagerank = parameters
     best_indeg = dict(sorted({k:in_degree[k] for k in subset if k in in_degree}.iteritems(), key=operator.itemgetter(1), reverse=True)[:limit])
     best_outdeg = dict(sorted({k:out_degree[k] for k in subset if k in out_degree}.iteritems(), key=operator.itemgetter(1), reverse=True)[:limit])
-    best_deg = dict(sorted({k:degree[k] for k in subset if k in degree}.iteritems(), key=operator.itemgetter(1), reverse=True)[:limit])
     best_weighteddeg = dict(sorted({k:weighted_degree[k] for k in subset if k in weighted_degree}.iteritems(), key=operator.itemgetter(1), reverse=True)[:limit])
     best_pagerank = dict(sorted({k:pagerank[k] for k in subset if k in pagerank}.iteritems(), key=operator.itemgetter(1), reverse=True)[:limit])
-    return best_indeg,best_outdeg,best_deg,best_weighteddeg,best_pagerank
+    return best_indeg,best_outdeg,best_weighteddeg,best_pagerank
 
 def find_average(subset,parameters):
     return [
@@ -57,9 +75,21 @@ def find_average(subset,parameters):
     sum([parameters[1][k] for k in subset[1]])/float(len(subset[1])),
     sum([parameters[2][k] for k in subset[2]])/float(len(subset[2])),
     sum([parameters[3][k] for k in subset[3]])/float(len(subset[3])),
-    sum([parameters[4][k] for k in subset[4]])/float(len(subset[4]))
     ]
 
+'''
+Separates students from instructors using 'i_answer' and 'i_update' tags from class_content.json.
+Assuming that every instructor gives an 'instructor answer' or updates another instructor's answer
+at some point in the course.
+
+Arguments
+---------
+    - course directory
+Returns
+-------
+    - list of instructors
+    - list of students
+'''
 def identify_instructors(directory):
     #print directory
     user_file = directory+'/users.json'
@@ -90,6 +120,27 @@ def identify_instructors(directory):
     # print '#students: ',len(students)
     return list(instructors), list(students)
 
+'''
+This function is used to generate a network from the records fetched from mysql database.
+If divide=True, it will also generate a cumulative subnetwork for each week of the course.
+The weeks are divided according to the post creation timestamps.
+
+Arguments
+----------
+   - directory: course directory
+   - name:  name of the change_log file created from piazza_json_export_to_sql.py
+   - divide: True if we want to divide the network into weekly subnetworks 
+Returns
+-------
+    - None
+Output
+------
+    - directory/network.csv : contains the network
+    - directory/not_found.csv : contains list of users present in class_content.json but
+                                not in 'users.json' (people who dropped out of the course)
+    - directory/subnetwork{i}.csv (if divide=True) : contains the cumulative network uptil week {i}
+
+'''
 def convertToEdgeList(directory,name,divide=False):
     user_file = directory+'/users.json'
     children_file = directory+'/'+name+'.txt'
@@ -100,6 +151,8 @@ def convertToEdgeList(directory,name,divide=False):
     parsed = json.load(data)
     
     user_edges = {}
+
+    # Set of all the users enrolled in the course. Initializing user_edges directory to 0.
     users = set()
     for rec1 in parsed:
         users.add(rec1['user_id'])
@@ -122,26 +175,23 @@ def convertToEdgeList(directory,name,divide=False):
             flag = False
 
         children = [x for x in children if x is not None]
-        
-        for i in range(len(children)):
-                for j in range(i,len(children)):
-                        if children[i] not in users:
-                            notfound.add(children[i])
-                            continue
-                        if children[j] not in users:
-                            notfound.add(children[j])
-                            continue
-                        user_edges[(children[j],children[i])]+=1
+        thread_starter = children[0]
+
+        if thread_starter not in users:
+            continue
+
+        for i in range(1,len(children)):
+            if children[i] not in users:
+                continue
+            user_edges[(children[i],thread_starter)]+=1
+
+        # writes another subnetwork as soon as the difference in timestamps becomes greater than 7
         if divide and (d2-d1).days/7>=1:            
-            write_network_to_file(directory+'/subnetwork'+str(num_week)+'.csv',directory + '/sub_not_found'+str(num_week)+'.txt',notfound,user_edges)
+            write_network_to_file(directory+'/subnetwork'+str(num_week)+'.csv',user_edges,None,0)
             flag=True
-            num_week+=1   
-    write_network_to_file(out_file,not_found_file,notfound,user_edges)
-
-    # print '# edges: ',sum(user_edges.values())
-    # print '# users: ', len(users)
-    # print '# not found:',len(notfound)
-
+            num_week+=1 
+    # writes the final network file  
+    write_network_to_file(out_file,user_edges,not_found_file,notfound)
 
 def process_into_csv_for_grades(directory, out_file, catalog_nbr, subject, year, quarter):
     content_file = directory + '/class_content.json'
@@ -153,7 +203,21 @@ def process_into_csv_for_grades(directory, out_file, catalog_nbr, subject, year,
     for rec in parsed:
         writer.writerow({'name':str(rec['name'].encode('utf-8').strip()), 'email':rec['email'], 'subject':subject,'catalog_nbr': catalog_nbr, 'quarter':quarter, 'year':year, 'piazza_id':rec['user_id']})
 
+'''
+This function takes in individual network statistics from all courses and combines them
+by creating a csv file for each network attribute. The statistics files are stored in
+piazza/data/stats
 
+Arguments
+----------
+    - None
+Returns
+-------
+    - None
+Output
+------
+    - piazza/data/stats/{attribute}.csv
+'''
 def combine_statistics():
     attributes = ['Nodes', 'Edges','Avg In Degree','Avg Out Degree','Avg Degree','Avg Weighted Degree', 'Density', 'Largest Strongly Connected Component','Largest Weakly Connected Component', 'Average Betweenness Centrality', 'Average Closeness Centrality', 'Average Degree Centrality', 'Average Eigenvector Centrality', 'Average Clustering Coefficient', 'Average Hub Score', 'Average Authority Score', 'Max Pagerank']
 
@@ -165,12 +229,10 @@ def combine_statistics():
 
         dictnodes = {'FALL11':[],'FALL12':[],'SUMMER13':[],'FALL13':[],'WINTER14':[],'SPRING14':[],'FALL14':[],'WINTER15':[],'FALL15':[],'SPRING16':[],'FALL16':[]}
 
-        #COURSES = ['cs229']
         counter = 0
         for course in COURSES:
                 counter+=1
                 path = DATA_DIRECTORY+course
-                #print course
                 f_stats = open(path+'/statistics.csv','r')
                 reader = csv.DictReader(f_stats)
                 for row in reader:
@@ -180,10 +242,82 @@ def combine_statistics():
         for key in dictnodes:
             writer.writerow([key]+dictnodes[key])
 
+'''
+Plots parameter trends (3rd degree polynomial fit) for top 10 students in the course
+This function goes over all the directories to plot the parameter with respect to weeks
+in the course. It adds a line to the same figure for every course offering.
+
+Arguments
+---------
+    - directory: course directory
+    - parameter: 'Degree'/'Pagerank'
+    - ax: pyplot axis
+
+Returns:
+--------
+    - None
+
+Output
+------
+    plots in piazza/figures
+'''
+def plot_weekly_change_in_parameter(directory, parameter,ax):
+    weeks = 1
+    x = []
+
+    student_statistics = directory + '/statistics_student.csv'
+    f_student = open(student_statistics,'r')
+    reader = csv.reader(f_student)
+
+    # Skipping the header of the csv file
+    next(reader, None)
+    data = list(reader)
+
+    # Returning if csv is empty
+    if len(data)<3: 
+        return
+    
+    for row in data:
+        _,_,_,deg,pagerank = row
+        if parameter=='Degree': 
+            x.append(float(deg))
+        elif parameter=='Pagerank':
+            x.append(float(pagerank))
+        weeks+=1
+    weeks = range(1,weeks)
+    
+    # Calculates a 3rd degree polynomial fit
+    z = np.polyfit(weeks,x,3)
+    f = np.poly1d(z)
+    y_new = f(weeks)
+    #plt.clf()
+    
+    # Plotting everything
+    ax.plot(weeks,x,'o')
+    ax.plot(weeks,y_new,label=str(directory.split('/')[3]))
+    pylab.title(str(directory.split('/')[2])+' Polynomial Fit for '+parameter+ ' for top 10 students')
+    plt.xlabel('Week #')
+    plt.ylabel(parameter)
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=13)
+
+    print str(directory.split('/')[2])+' Polynomial Fit for '+parameter
+    
+
+    # Saving the plot to piazza/figures
+    out_directory = '../figures/'+str(directory.split('/')[2])
+    if not os.path.exists(out_directory):
+        os.makedirs(out_directory)
+    plt.savefig('../figures/'+str(directory.split('/')[2])+'/'+'polyfit_'+parameter+'_'+str(directory.split('/')[3])+'.png')
+
 if __name__ == "__main__":
     for course in COURSES:
             print course
+            fig = plt.figure()
+            ax = plt.subplot(111)
+            box = ax.get_position()
+            ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+            
             for root, dirs, files in os.walk(DATA_DIRECTORY+course+'/'):
                 for dir in dirs:
-                    print dir
-                    identify_instructors(DATA_DIRECTORY+root+dir)
+                    print root+dir
+                    plot_weekly_change_in_parameter(root+dir,'Degree',ax)
