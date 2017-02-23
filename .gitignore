@@ -90,3 +90,8 @@ ENV/
 .project
 .pydevproject
 data
+forumPrompts.aux
+forumPrompts.bbl
+*~
+forumPrompts.blg
+\.DS_Store
