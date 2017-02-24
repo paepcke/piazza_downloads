@@ -11,7 +11,9 @@ import statistics
 
 from constants import *
 from datetime import *
+from scipy import optimize
 from matplotlib import pylab
+from scipy import interpolate
 
 def print_records(records):
     if records.count()==0: print 'No records found!'
@@ -55,6 +57,9 @@ def write_network_to_file(out_file,user_edges,not_found_file=None,notfound=0):
         with open(not_found_file,'w') as nf:
              nf.write('\n'.join(str(id) for id in notfound))
 
+def piecewise_linear(x, x0, y0, k1, k2):
+    return np.piecewise(x, [x < x0], [lambda x:k1*x + y0-k1*x0, lambda x:k2*x + y0-k2*x0])
+
 '''
 Arguments
 ---------
@@ -84,12 +89,17 @@ def find_average(subset,parameters):
     ]
 
 def find_median(subset,parameters):
-    return[
-        statistics.median([parameters[0][k] for k in subset[0]]),
-        statistics.median([parameters[1][k] for k in subset[1]]),
-        statistics.median([parameters[2][k] for k in subset[2]]),
-        statistics.median([parameters[3][k] for k in subset[3]]),
-    ]
+    try:
+        result=[
+            statistics.median([parameters[0][k] for k in subset[0] if parameters[0][k]!=0 ]),
+            statistics.median([parameters[1][k] for k in subset[1] if parameters[1][k]!=0 ]),
+            statistics.median([parameters[2][k] for k in subset[2] if parameters[2][k]!=0 ]),
+            statistics.median([parameters[3][k] for k in subset[3] if parameters[3][k]!=0 ])
+        ]
+    except:
+        result= []
+
+    return result
 
 '''
 Separates students from instructors using 'i_answer' and 'i_update' tags from class_content.json.
@@ -161,6 +171,8 @@ def convertToEdgeList(directory,name,divide=False):
     out_file = directory+'/network.csv'
     not_found_file = directory + '/not_found.txt'
 
+    print children_file
+
     data = open(user_file, 'r')
     parsed = json.load(data)
     
@@ -180,6 +192,7 @@ def convertToEdgeList(directory,name,divide=False):
       notfound = set()
       for children in f:
         timestamp,children =children.split('\t')[0], ast.literal_eval(children.split('\t')[1])
+        if not children: continue
 
         if not flag:
             d2 = datetime.fromtimestamp(float(timestamp))
@@ -257,6 +270,71 @@ def combine_statistics():
         for key in dictnodes:
             writer.writerow([key]+dictnodes[key])
 
+
+def spline_interpolation(x,y1,y2,plot_name,plot_title,out_directory,xlabel,ylabel):
+    x = np.array(x)
+    y1 = np.array(y1)
+    tck = interpolate.splrep(x, y1, k=2, s=0)
+    xnew = np.linspace(0, 15)
+
+    fig, axes = plt.subplots(3)
+
+    # box = axes[2].get_position()
+    # axes[2].set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    
+    axes[0].plot(x, y1, 'o',color='r', markersize=10, label = 'avg trend for top 10 students')
+    axes[0].plot(x,y2,'-',color='g',label='median of rest of the students')
+    #axes[0].plot(xnew, interpolate.splev(xnew, tck, der=0))
+    # axes[1].plot(x, interpolate.splev(x, tck, der=1), label = '1st dev')
+    dev_2 = interpolate.splev(x, tck, der=2)
+    axes[2].plot(x, dev_2, label = '2nd derivative')
+
+    turning_point_mask = dev_2 == np.amax(dev_2)
+
+    axes[2].plot(x[turning_point_mask], dev_2[turning_point_mask],'rx',mew=7, color='r', markersize=15,
+                 label = 'Inflection point')
+
+    for i in range(len(turning_point_mask)):
+        if turning_point_mask[i]==True:
+            inflection  = i
+            break
+
+    
+    x_before_inflection = x[:inflection]
+    x_after_inflection = x[inflection:]
+    y_before_inflection = y1[:inflection]
+    y_after_inflection = y1[inflection:]
+    
+    if inflection>0:
+        fit1 = np.polyfit(x_before_inflection,y_before_inflection,1)
+        fit_fn1 = np.poly1d(fit1) 
+        axes[1].plot(x_before_inflection,fit_fn1(x_before_inflection),'-',color='m')
+
+    fit2 = np.polyfit(x_after_inflection,y_after_inflection,1)
+    fit_fn2 = np.poly1d(fit2) 
+
+    axes[1].plot(x_after_inflection,fit_fn2(x_after_inflection),'-',color='y')
+    axes[1].plot(x, y1, 'o',color='b', markersize=6)
+
+    # for ax in axes:
+    #     ax.legend(loc = 'best')
+    h1, l1 = axes[0].get_legend_handles_labels()
+    h2, l2 = axes[2].get_legend_handles_labels()
+    axes[2].set_xlabel(xlabel)
+    axes[1].set_ylabel(ylabel)
+    
+    #pylab.title(str(directory.split('/')[2])+' Polynomial Fit for '+parameter+ ' for top 10 students')
+    #pylab.title(plot_title)
+
+    # Put a legend below current axis
+    axes[2].legend(h1+h2,l1+l2,loc='upper center', bbox_to_anchor=(0.5, -0.09),
+              fancybox=True, shadow=True, ncol=2,fontsize=8)
+
+    # Saving the plot to piazza/figures
+    if not os.path.exists(out_directory):
+        os.makedirs(out_directory)
+    plt.savefig(out_directory +plot_name)
+    #plt.show()
 '''
 Plots parameter trends (3rd degree polynomial fit) for top 10 students in the course
 This function goes over all the directories to plot the parameter with respect to weeks
@@ -300,8 +378,8 @@ def plot_weekly_change_in_parameter(directory, parameter,ax):
         return
     
     for row in data:
-        _,_,_,deg,pagerank = row
-        if parameter=='Degree': 
+        _,_,deg,_,pagerank = row
+        if parameter=='Weighted Out Degree': 
             y1.append(float(deg))
         elif parameter=='Pagerank':
             y1.append(float(pagerank))
@@ -309,19 +387,18 @@ def plot_weekly_change_in_parameter(directory, parameter,ax):
     weeks = range(1,weeks)
 
     for row in reader2:
-        _,_,_,deg,pagerank = row
-        if parameter=='Degree': 
+        _,_,deg,_,pagerank = row
+        if parameter=='Weighted Out Degree': 
             y2.append(float(deg))
         elif parameter=='Pagerank':
             y2.append(float(pagerank))
 
-    # Calculates a 3rd degree polynomial fit
-    z = np.polyfit(weeks,y1,3)
-    f = np.poly1d(z)
-    y1_new = f(weeks)
-    #plt.clf()
-    fig = plt.figure()
-    ax = plt.subplot(111)
+
+    plot_title = str(directory.split('/')[2])+str(directory.split('/')[3])+' '+ parameter+'\n Comparison between best-value trend and median for students in the course'
+    print str(directory.split('/')[2])+' Comparison for '+parameter
+    out_directory = '../figures/'+str(directory.split('/')[2])
+    plot_name = '/'+'comparison_'+parameter+'_'+str(directory.split('/')[3])+'.png'
+    spline_interpolation(weeks,y1,y2,plot_name,plot_title,out_directory,'Week',parameter)
 
     '''
     # For positioning legend outside the plot on right
@@ -329,16 +406,17 @@ def plot_weekly_change_in_parameter(directory, parameter,ax):
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
     ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=13)
     '''
-
+    '''
     # For positioning legend at the bottom of the plot
     box = ax.get_position()
     ax.set_position([box.x0, box.y0 + box.height * 0.1,
                      box.width, box.height * 0.9])
-    
+    ax.plot(weeks, y1, "o",label='top 10 students')
+    ax.plot(weeks, piecewise_linear(weeks, *p),label='top 10 students polynomial best fit')
     # Plotting everything
-    ax.plot(weeks,y1,'o',label='top 10 students')
+    #ax.plot(weeks,y1,'o',label='top 10 students')
     #ax.plot(weeks,y1_new,label=str(directory.split('/')[3]))
-    ax.plot(weeks,y1_new,label='top 10 students polynomial best fit')
+    #ax.plot(weeks,y1_new,label='top 10 students polynomial best fit')
     ax.plot(weeks,y2,label='median of rest of the students')
     #pylab.title(str(directory.split('/')[2])+' Polynomial Fit for '+parameter+ ' for top 10 students')
     pylab.title(str(directory.split('/')[2])+str(directory.split('/')[3])+' '+ parameter+'\n Comparison between best-value trend and median for students in the course')
@@ -360,7 +438,7 @@ def plot_weekly_change_in_parameter(directory, parameter,ax):
     if not os.path.exists(out_directory):
         os.makedirs(out_directory)
     plt.savefig('../figures/'+str(directory.split('/')[2])+'/'+'comparison_'+parameter+'_'+str(directory.split('/')[3])+'.png')
-
+    '''
 if __name__ == "__main__":
     for course in COURSES:
             print course    
@@ -368,4 +446,4 @@ if __name__ == "__main__":
                 for dir in dirs:
                     print root+dir
                     plot_weekly_change_in_parameter(root+dir,'Pagerank',None)
-                    plot_weekly_change_in_parameter(root+dir,'Degree',None)
+                    plot_weekly_change_in_parameter(root+dir,'Weighted Out Degree',None)

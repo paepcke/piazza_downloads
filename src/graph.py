@@ -198,13 +198,23 @@ def stats(course,divide=False):
                         fieldnames_sub[4]:G_sub.best_ins_params[3]
                         })
 
-                        writer_sub_median.writerow({
-                        fieldnames_sub[0]: i,
-                        fieldnames_sub[1]:G_sub.student_median[0],
-                        fieldnames_sub[2]:G_sub.student_median[1],
-                        fieldnames_sub[3]:G_sub.student_median[2],
-                        fieldnames_sub[4]:G_sub.student_median[3]
-                        })
+                        if G_sub.student_median:
+                            writer_sub_median.writerow({
+                            fieldnames_sub[0]: i,
+                            fieldnames_sub[1]:G_sub.student_median[0],
+                            fieldnames_sub[2]:G_sub.student_median[1],
+                            fieldnames_sub[3]:G_sub.student_median[2],
+                            fieldnames_sub[4]:G_sub.student_median[3]
+                            })
+                        else:
+                            writer_sub_median.writerow({
+                            fieldnames_sub[0]: i,
+                            fieldnames_sub[1]:-10,
+                            fieldnames_sub[2]:-10,
+                            fieldnames_sub[3]:-10,
+                            fieldnames_sub[4]:-10
+                            })
+
 
                     else: 
                         break
