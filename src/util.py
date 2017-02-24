@@ -280,10 +280,27 @@ def critical_points(x,y):
     prev = 0
     resultx = []
     resulty = []
+    addlistx = []
+    addlisty = []
     for elem in zero_crossings:
-        resultx.append(x[prev:elem])
-        resulty.append(y[prev:elem])
+        addlistx = []
+        addlisty = []
+        if elem-prev==1:
+            if x[prev] not in addlistx: 
+                addlistx.append(x[prev])
+                addlisty.append(y[prev])
+            addlistx.append(x[elem])
+            addlisty.append(y[elem])
+        else:
+            addlistx.extend(x[prev:elem])
+            addlisty.extend(y[prev:elem])
+        resultx.append(addlistx)
+        resulty.append(addlisty)
         prev=elem
+    if addlistx:
+        resultx.append(addlistx)
+        resulty.append(addlisty)
+
     resultx.append(x[prev:]) 
     resulty.append(y[prev:]) 
     return resultx,resulty
@@ -316,7 +333,6 @@ def spline_interpolation(x,y1,y2,plot_name,plot_title,out_directory,xlabel,ylabe
     for i in range(len(x_divisions)):
             fit = np.polyfit(x_divisions[i],y_divisions[i],1)
             fit_fn = np.poly1d(fit) 
-
             axes[1].plot(x_divisions[i],fit_fn(x_divisions[i]),'-',color=colors[i%len(colors)])
 
     axes[1].plot(x, y1, 'o',color='b', markersize=6)
