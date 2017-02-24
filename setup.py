@@ -16,7 +16,8 @@ setup(
                         'progressbar>=2.3',
                         'plotly>=2.0.2',
                         'matplotlib>=1.5.3',
-                        'numpy>=1.11.1'
+                        'numpy>=1.11.1',
+                        'scipy>=0.18.1',
 
 			] + test_requirements,
 
