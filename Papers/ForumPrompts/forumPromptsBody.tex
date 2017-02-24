@@ -127,20 +127,49 @@ more than if the low-page-rank node $C$ commented on $D$.
 In terms of evaluating a student's participation in the forum, a high
 page rank, and high out-degree are positive. Low values are less
 positive. We chose these two values because of their relatively
-straight-forward meanings for forum posts. Other measures, such as
-{\em betweenness} are meaningful as well, and they are included in
-the drop-out prediction analysis of, for instance
-\cite{yang2013}. Also of interest are the contents of posts:
-students who persistently post irrelevant contents contribute less
-positively to the forum than constructively participating
-students. For the purpose of identifying moments where warnings or
-encouragement are in order the two measures of page rank and
-out-degree provide strong enough signals.
+straight-forward meanings when applied to forum posts, and for their
+relevance to our goal of identifying potential intervention times.
+
+Some of the fifteen other measures we computed, such as {\em
+  betweenness} are meaningful for forum scenarios as well, but their
+usefulness depends on one's analysis goals. For example,
+\cite{yang2013} include several of those measures for the purpose of
+prediction analysis. For evaluation contribution quality the contents
+of posts would need to be considered: students who persistently post
+irrelevant contents contribute less positively to the forum than
+constructively participating students. However, for our purposes the
+two measures of page rank and out-degree provide strong enough
+signals.
 
 \section{Analysis Procedure}
 
-We computed how in-degree and page rank changed week by week in a
-total of 
+We computed our chosen social graph measures for 39 offerings of seven
+residential courses, and for one MOOC. Table~\ref{tab:courseSummary}
+summarizes these data sources. We recomputed the measures for every
+week throughout the quarter of each offering. In order to establish
+values against which to compare each student's measures during those
+weekly checkpoints we each time computed the two measures for ({\em
+  i}) the average of the ten students who overall contributed the
+maximum number of posts, and ({\em ii}) for the median number of
+contributions at each checkpoint.
+
+\begin{table*}[]
+\centering
+\caption{Summary of Examined Courses}
+\label{tab:courseSummary}
+\begin{tabular}{|l|c|c|l|l|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Topic}}                            & \textbf{Offerings} & \textbf{Num-Students} & \multicolumn{1}{c|}{\textbf{Num-Active-Students}} & \multicolumn{1}{c|}{\textbf{Encouragement}} \\ \hline
+\begin{tabular}[c]{@{}l@{}}Computational\\ Biology\end{tabular} & 5                  & 120                   &                                                   &                                             \\ \hline
+Artificial Intelligence                                         & 7                  & 340                   &                                                   &                                             \\ \hline
+Machine Learning                                                & 7                  & 640                   &                                                   &                                             \\ \hline
+Computer Vision                                                 & 5                  & 144                   &                                                   &                                             \\ \hline
+Decision Analysis                                               & 4                  & 232                   &                                                   &                                             \\ \hline
+Audio Signal Processing                                         & 6                  & 21                    &                                                   &                                             \\ \hline
+Political Methodology                                           & 5                  & 23                    &                                                   &                                             \\ \hline
+\end{tabular}
+\end{table*}
+
 
 \begin{figure}[htp]
        \centering
