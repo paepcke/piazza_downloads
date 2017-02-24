@@ -11,9 +11,10 @@ import statistics
 
 from constants import *
 from datetime import *
-from scipy import optimize
 from matplotlib import pylab
+from numpy import diff
 from scipy import interpolate
+from scipy import optimize
 
 def print_records(records):
     if records.count()==0: print 'No records found!'
@@ -270,6 +271,23 @@ def combine_statistics():
         for key in dictnodes:
             writer.writerow([key]+dictnodes[key])
 
+def critical_points(x,y):
+    derivative =  diff(np.array(y))
+
+    critical_points = []
+    zero_crossings = np.where(np.diff(np.sign(derivative)))[0]
+    zero_crossings = [i+1 for i in zero_crossings]
+    prev = 0
+    resultx = []
+    resulty = []
+    for elem in zero_crossings:
+        resultx.append(x[prev:elem])
+        resulty.append(y[prev:elem])
+        prev=elem
+    resultx.append(x[prev:]) 
+    resulty.append(y[prev:]) 
+    return resultx,resulty
+
 
 def spline_interpolation(x,y1,y2,plot_name,plot_title,out_directory,xlabel,ylabel):
     x = np.array(x)
@@ -282,49 +300,31 @@ def spline_interpolation(x,y1,y2,plot_name,plot_title,out_directory,xlabel,ylabe
     # box = axes[2].get_position()
     # axes[2].set_position([box.x0, box.y0, box.width * 0.8, box.height])
     
-    axes[0].plot(x, y1, 'o',color='r', markersize=10, label = 'avg trend for top 10 students')
+    axes[0].plot(x, y1, 'o',color='r', markersize=10, label = 'avg trend for top 10% students')
     axes[0].plot(x,y2,'-',color='g',label='median of rest of the students')
-    #axes[0].plot(xnew, interpolate.splev(xnew, tck, der=0))
-    # axes[1].plot(x, interpolate.splev(x, tck, der=1), label = '1st dev')
-    dev_2 = interpolate.splev(x, tck, der=2)
-    axes[2].plot(x, dev_2, label = '2nd derivative')
 
-    turning_point_mask = dev_2 == np.amax(dev_2)
+    dev_1 = interpolate.splev(x, tck, der=1)
+    axes[2].plot(x, dev_1, label = '1st derivative')
 
-    axes[2].plot(x[turning_point_mask], dev_2[turning_point_mask],'rx',mew=7, color='r', markersize=15,
+    turning_point_mask = dev_1 == np.amax(dev_1)
+
+    axes[2].plot(x[turning_point_mask], dev_1[turning_point_mask],'rx',mew=7, color='r', markersize=15,
                  label = 'Inflection point')
-
-    for i in range(len(turning_point_mask)):
-        if turning_point_mask[i]==True:
-            inflection  = i
-            break
-
     
-    x_before_inflection = x[:inflection]
-    x_after_inflection = x[inflection:]
-    y_before_inflection = y1[:inflection]
-    y_after_inflection = y1[inflection:]
-    
-    if inflection>0:
-        fit1 = np.polyfit(x_before_inflection,y_before_inflection,1)
-        fit_fn1 = np.poly1d(fit1) 
-        axes[1].plot(x_before_inflection,fit_fn1(x_before_inflection),'-',color='m')
+    x_divisions,y_divisions = critical_points(x,y1)
+    colors = ['m','k','y']
+    for i in range(len(x_divisions)):
+            fit = np.polyfit(x_divisions[i],y_divisions[i],1)
+            fit_fn = np.poly1d(fit) 
 
-    fit2 = np.polyfit(x_after_inflection,y_after_inflection,1)
-    fit_fn2 = np.poly1d(fit2) 
+            axes[1].plot(x_divisions[i],fit_fn(x_divisions[i]),'-',color=colors[i%len(colors)])
 
-    axes[1].plot(x_after_inflection,fit_fn2(x_after_inflection),'-',color='y')
     axes[1].plot(x, y1, 'o',color='b', markersize=6)
 
-    # for ax in axes:
-    #     ax.legend(loc = 'best')
     h1, l1 = axes[0].get_legend_handles_labels()
     h2, l2 = axes[2].get_legend_handles_labels()
     axes[2].set_xlabel(xlabel)
     axes[1].set_ylabel(ylabel)
-    
-    #pylab.title(str(directory.split('/')[2])+' Polynomial Fit for '+parameter+ ' for top 10 students')
-    #pylab.title(plot_title)
 
     # Put a legend below current axis
     axes[2].legend(h1+h2,l1+l2,loc='upper center', bbox_to_anchor=(0.5, -0.09),
@@ -336,7 +336,7 @@ def spline_interpolation(x,y1,y2,plot_name,plot_title,out_directory,xlabel,ylabe
     plt.savefig(out_directory +plot_name)
     #plt.show()
 '''
-Plots parameter trends (3rd degree polynomial fit) for top 10 students in the course
+Plots parameter trends (1st degree polynomial fit) for top 10% students in the course
 This function goes over all the directories to plot the parameter with respect to weeks
 in the course. It adds a line to the same figure for every course offering.
 

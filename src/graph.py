@@ -1,5 +1,6 @@
 import csv
 import json
+import math
 import networkx as nx
 
 from constants import *
@@ -72,7 +73,6 @@ class Graph:
         self.best_ins_params = None
 
         param_list =[self.G.in_degree(weight='weight'),self.G.out_degree(weight='weight'),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)]
-         
 
         if sub:
             self.best_student_params = find_average(best_students,param_list)
@@ -80,10 +80,13 @@ class Graph:
             self.student_median = find_median(rest_students,param_list)
 
         if not sub:
-            # calculation for parameters for best students, taking top 10 students
-            best_indeg_student,best_outdeg_student,best_weighteddeg_student,best_pagerank_student = get_best_parameters(students, 10, param_list)
+            # calculation for parameters for best students, taking top 10% students
+            limit1 = int(math.ceil(0.1*len(students)))
+            limit2 = int(math.ceil(0.1*len(instructors)))
+
+            best_indeg_student,best_outdeg_student,best_weighteddeg_student,best_pagerank_student = get_best_parameters(students, limit1, param_list)
             # calculation for parameters for best instructors, taking top 2 instructors
-            best_indeg_ins,best_outdeg_ins,best_weighteddeg_ins,best_pagerank_ins = get_best_parameters(instructors, 2, param_list)
+            best_indeg_ins,best_outdeg_ins,best_weighteddeg_ins,best_pagerank_ins = get_best_parameters(instructors, limit2, param_list)
             return [best_indeg_student,best_outdeg_student,best_weighteddeg_student,best_pagerank_student],[best_indeg_ins,best_outdeg_ins,best_weighteddeg_ins,best_pagerank_ins]
 
     def write_graph(self):

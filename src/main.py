@@ -20,6 +20,7 @@ from util import *
 
 
 def main(getStats = False, combine = False):
+    '''
     print 'Fetching records from sql..'
     if not os.path.exists('stats'):
         os.makedirs('stats')
@@ -37,6 +38,7 @@ def main(getStats = False, combine = False):
         i+=1
         fetch(task)
     bar.finish()
+    '''
     print 'Creating Network-----------------------------------------------'
     for course in COURSES:
         print course
