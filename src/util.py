@@ -9,6 +9,7 @@ import plotly.graph_objs as go
 import plotly.plotly as py
 import statistics
 
+from changepoint.mean_shift_model import MeanShiftModel
 from constants import *
 from datetime import *
 from matplotlib import pylab
@@ -58,8 +59,13 @@ def write_network_to_file(out_file,user_edges,not_found_file=None,notfound=0):
         with open(not_found_file,'w') as nf:
              nf.write('\n'.join(str(id) for id in notfound))
 
-def piecewise_linear(x, x0, y0, k1, k2):
-    return np.piecewise(x, [x < x0], [lambda x:k1*x + y0-k1*x0, lambda x:k2*x + y0-k2*x0])
+def change_point(ts):
+    #ts = np.concatenate([np.random.normal(0, 0.1, 100), np.random.normal(10, 0.1, 100)])
+    model = MeanShiftModel()
+    stats_ts, pvals, nums = model.detect_mean_shift(ts, B=1000)
+    print 'stats_ts = ',stats_ts
+    print 'pvals = ',pvals
+    print 'nums = ',nums
 
 '''
 Arguments
@@ -416,50 +422,27 @@ def plot_weekly_change_in_parameter(directory, parameter,ax):
     plot_name = '/'+'comparison_'+parameter+'_'+str(directory.split('/')[3])+'.png'
     spline_interpolation(weeks,y1,y2,plot_name,plot_title,out_directory,'Week',parameter)
 
-    '''
-    # For positioning legend outside the plot on right
-    box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5),fontsize=13)
-    '''
-    '''
-    # For positioning legend at the bottom of the plot
-    box = ax.get_position()
-    ax.set_position([box.x0, box.y0 + box.height * 0.1,
-                     box.width, box.height * 0.9])
-    ax.plot(weeks, y1, "o",label='top 10 students')
-    ax.plot(weeks, piecewise_linear(weeks, *p),label='top 10 students polynomial best fit')
-    # Plotting everything
-    #ax.plot(weeks,y1,'o',label='top 10 students')
-    #ax.plot(weeks,y1_new,label=str(directory.split('/')[3]))
-    #ax.plot(weeks,y1_new,label='top 10 students polynomial best fit')
-    ax.plot(weeks,y2,label='median of rest of the students')
-    #pylab.title(str(directory.split('/')[2])+' Polynomial Fit for '+parameter+ ' for top 10 students')
-    pylab.title(str(directory.split('/')[2])+str(directory.split('/')[3])+' '+ parameter+'\n Comparison between best-value trend and median for students in the course')
-
-    
-    plt.xlabel('Week #')
-    plt.ylabel(parameter)
-    
-    # Put a legend below current axis
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
-              fancybox=True, shadow=True, ncol=5,fontsize=11)
-  
-
-    print str(directory.split('/')[2])+' Comparison for '+parameter
-    
-
-    # Saving the plot to piazza/figures
-    out_directory = '../figures/'+str(directory.split('/')[2])
-    if not os.path.exists(out_directory):
-        os.makedirs(out_directory)
-    plt.savefig('../figures/'+str(directory.split('/')[2])+'/'+'comparison_'+parameter+'_'+str(directory.split('/')[3])+'.png')
-    '''
 if __name__ == "__main__":
     for course in COURSES:
             print course    
             for root, dirs, files in os.walk('../stats/'+course+'/'):
                 for dir in dirs:
                     print root+dir
-                    plot_weekly_change_in_parameter(root+dir,'Pagerank',None)
-                    plot_weekly_change_in_parameter(root+dir,'Weighted Out Degree',None)
+                    top_student_statistics = root + dir + '/top_statistics_student.csv'
+                    f_top_students = open(top_student_statistics,'r')
+
+                    reader1 = csv.reader(f_top_students)
+                    # Skipping the header of the csv file
+                    next(reader1, None)
+                    data = list(reader1)
+                    weeks = 1
+                    y1 = []
+                    for row in data:
+                        _,_,deg,_,pagerank = row
+                        y1.append(float(pagerank))
+                    change_point(y1)
+
+
+
+                    # plot_weekly_change_in_parameter(root+dir,'Pagerank',None)
+                    # plot_weekly_change_in_parameter(root+dir,'Weighted Out Degree',None)
