@@ -6,7 +6,7 @@ Bootstrap implementation based on www.variation.com/cpa/tech/changepoint.html
 
 class ChangePointModel(object):
     def __init__(self):
-        self.change_intervals = []
+        self.change_intervals = set()
 
     def compute_cusum_ts(self, ts):
         """ Compute the Cumulative Sum at each point 't' of the time series. """
@@ -50,7 +50,6 @@ class ChangePointModel(object):
     #def plot_bootstrap_histogram():
 
     def mean_square_error(self, ts, m):
-        #print [ts[i] for i in range(m)]
         X1 = np.sum([ts[i] for i in range(m)])/float(m)
         X2 = np.sum([ts[i] for i in range(m,len(ts))])/float(len(ts)-m)
 
@@ -62,21 +61,30 @@ class ChangePointModel(object):
     def run(self, ts, B=1000):
         N = len(ts)
 
-        
         if len(ts)>1:
             S0_diff,S_diff = self.bootstrap(ts,B)
-            print 'Got bootstrap'
             conf  = self.confidence(S0_diff,S_diff)
-            print 'Confidence: ',conf
-            if conf > 90:
-                best_m = self.estimate_best_m(ts)
-                print 'Best estimate of m: ',best_m
-                if best_m==0: self.change_intervals.append([ts[0]])
-                self.run(ts[:best_m],B)
-                self.run(ts[best_m+1:],B)
-            else: self.change_intervals.append(ts)
-        else: 
-            if ts: self.change_intervals.append(ts)
+
+            best_m = self.estimate_best_m(ts)
+            if conf > 95:
+                self.change_intervals.add(ts[best_m])
+            self.run(ts[:best_m+1],B)
+            self.run(ts[best_m+1:],B)
+
+    def plot(self,ts):
+        import matplotlib.pyplot as plt
+        weeks = range(1,len(ts)+1)
+        indices = [ts.index(list(self.change_intervals)[j]) for j in range(len(self.change_intervals)) if ts.index(list(self.change_intervals)[j])!=weeks[len(weeks)-1]]
+
+        plt.figure()
+        plt.plot(weeks,ts)
+        # ax = plt.gca()
+        # ax.set_axis_bgcolor('red')
+
+        for index in indices:
+            plt.axvspan(index+1, index+1+1, facecolor='#2ca02c', alpha=0.5)
+        plt.show()
+
 
 if __name__ == "__main__":
     ts = [0.0013316809193246381, 0.005478151755720595, 0.005588738892689889, 0.00658393992617357,
@@ -85,4 +93,4 @@ if __name__ == "__main__":
           0.007966075694506278, 0.0033839897207213697]
     model = ChangePointModel()
     model.run(ts)
-    print model.change_intervals
+    model.plot(ts)

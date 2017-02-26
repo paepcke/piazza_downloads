@@ -9,7 +9,6 @@ import plotly.graph_objs as go
 import plotly.plotly as py
 import statistics
 
-from changepoint.mean_shift_model import MeanShiftModel
 from constants import *
 from datetime import *
 from matplotlib import pylab
@@ -58,14 +57,6 @@ def write_network_to_file(out_file,user_edges,not_found_file=None,notfound=0):
     if not_found_file:
         with open(not_found_file,'w') as nf:
              nf.write('\n'.join(str(id) for id in notfound))
-
-def change_point(ts):
-    #ts = np.concatenate([np.random.normal(0, 0.1, 100), np.random.normal(10, 0.1, 100)])
-    model = MeanShiftModel()
-    stats_ts, pvals, nums = model.detect_mean_shift(ts, B=1000)
-    print 'stats_ts = ',stats_ts
-    print 'pvals = ',pvals
-    print 'nums = ',nums
 
 '''
 Arguments
