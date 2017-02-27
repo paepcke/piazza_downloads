@@ -18,6 +18,8 @@ setup(
                         'matplotlib>=1.5.3',
                         'numpy>=1.11.1',
                         'scipy>=0.18.1',
+                        'ez-setup>=0.9'
+                        'spc>=0.3'
 
 			] + test_requirements,
 

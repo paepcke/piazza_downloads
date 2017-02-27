@@ -1,4 +1,6 @@
 import numpy as np
+import spc
+import matplotlib.patches as mpatches
 
 '''
 Bootstrap implementation based on www.variation.com/cpa/tech/changepoint.html
@@ -71,19 +73,28 @@ class ChangePointModel(object):
             self.run(ts[:best_m+1],B)
             self.run(ts[best_m+1:],B)
 
-    def plot(self,ts):
+    def plot(self,ts, plot_name = None, parameter=None):
         import matplotlib.pyplot as plt
         weeks = range(1,len(ts)+1)
         indices = [ts.index(list(self.change_intervals)[j]) for j in range(len(self.change_intervals)) if ts.index(list(self.change_intervals)[j])!=weeks[len(weeks)-1]]
 
         plt.figure()
-        plt.plot(weeks,ts)
-        # ax = plt.gca()
-        # ax.set_axis_bgcolor('red')
+        plt.xlabel('Week')
+        plt.ylabel(parameter)
+        plt.title('Change point detection '+plot_name.split('/')[2] + plot_name.split('_')[-1].split('.png')[0])
 
         for index in indices:
-            plt.axvspan(index+1, index+1+1, facecolor='#2ca02c', alpha=0.5)
-        plt.show()
+            plt.axvspan(index, index+1, facecolor='#2ca02c', alpha=0.5)
+        
+        green_patch = mpatches.Patch(color='#2ca02c', label='95% confidence change')
+        plt.legend(loc='best',handles=[green_patch])
+
+        # Creating control chart
+        cc = spc.Spc(ts, spc.CHART_X_MR_X)
+        cc.get_chart()
+
+        if plot_name: plt.savefig(plot_name)
+        else: plt.show()
 
 
 if __name__ == "__main__":
