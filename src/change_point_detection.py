@@ -68,7 +68,7 @@ class ChangePointModel(object):
             conf  = self.confidence(S0_diff,S_diff)
 
             best_m = self.estimate_best_m(ts)
-            if conf > 95:
+            if conf > 99:
                 self.change_intervals.add(ts[best_m])
             self.run(ts[:best_m+1],B)
             self.run(ts[best_m+1:],B)
@@ -86,7 +86,7 @@ class ChangePointModel(object):
         for index in indices:
             plt.axvspan(index, index+1, facecolor='#2ca02c', alpha=0.5)
         
-        green_patch = mpatches.Patch(color='#2ca02c', label='95% confidence change')
+        green_patch = mpatches.Patch(color='#2ca02c', label='>99% confidence change')
         plt.legend(loc='best',handles=[green_patch])
 
         # Creating control chart
