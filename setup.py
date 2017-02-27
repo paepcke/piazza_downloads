@@ -18,7 +18,7 @@ setup(
                         'matplotlib>=1.5.3',
                         'numpy>=1.11.1',
                         'scipy>=0.18.1',
-                        'ez-setup>=0.9'
+                        #'ez_setup>=0.9',  # must be installed ahead of time with pip install ez_setup
                         'spc>=0.3'
 
 			] + test_requirements,
