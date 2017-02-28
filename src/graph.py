@@ -138,7 +138,7 @@ def stats(course,divide=False,all_stats=False):
         writer_all.writeheader()
 
     for root, dirs, files in os.walk(DATA_DIRECTORY+course+'/'):
-        for course_dir in dirs:
+        for course_dir in sorted(dirs,key=lambda d:d[-2:]):
             fieldnames = ['Course','Nodes', 'Edges','Avg In Degree','Avg Out Degree','Avg Degree','Avg Weighted Degree', 'Density', 'Largest Strongly Connected Component','Largest Weakly Connected Component', 'Average Betweenness Centrality', 'Average Closeness Centrality', 'Average Degree Centrality', 'Average Eigenvector Centrality', 'Average Clustering Coefficient', 'Average Hub Score', 'Average Authority Score', 'Max Pagerank']
             writer = csv.DictWriter(f_out, fieldnames=fieldnames)
             writer.writeheader()

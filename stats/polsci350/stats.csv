@@ -1,6 +1,4 @@
 Offering,Nodes,Edges,Weighted In Degree,Weighted Out Degree,Weighted Degree,Density,Active Participants,Size of largest strongly connected component,Size of largest weakly connected component
 FALL11,35,17,19,19,38,0.014285714285714285,15,1,15
-FALL12,4,0,0,0,0,0.0,0,1,1
 FALL13,37,45,99,99,198,0.033783783783783786,16,8,16
-FALL14,5,0,0,0,0,0.0,0,1,1
 FALL16,33,44,110,110,220,0.041666666666666664,17,5,17
