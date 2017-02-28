@@ -29,28 +29,57 @@ class smallMultiples:
           r, g, b = tableau20[i]    
           tableau20[i] = (r / 255., g / 255., b / 255.)
 
+  def get_files(self,course, parameter):
+      all_x = []
+      all_y = []
+      names = []
+      flattened_y = []
+
+      for root, dirs, files in os.walk('../stats/'+course+'/'):
+        for course_dir in dirs:
+            top_student_statistics = root + course_dir + '/top_statistics_student.csv'
+            f_top_students = open(top_student_statistics,'r')
+            reader = csv.DictReader(f_top_students)
+            names.append(course_dir)
+
+            if parameter == 'Pagerank':
+                y = [float(row['Pagerank']) for row in reader]
+                
+            elif parameter == 'Weighted Out Degree':
+                y = [float(row['Weighted Out Degree']) for row in reader]
+
+            if not y: 
+                continue
+
+            x = range(1,len(y)+1)
+            all_x.append(x)
+            all_y.append(y)
+            flattened_y.append(len(y))
+
+      normalized_y = [(i-min(flattened_y))/float((max(flattened_y)-min(flattened_y)+1)) for i in flattened_y]
+      return all_x,all_y,names,normalized_y
+
+
   def plot(self,parameter):
       n=1
-      i=1
+      k=1
       for course in COURSES:
-        print course  
-        i+=6
-        for root, dirs, files in os.walk('../stats/'+course+'/'):
-            for course_dir in dirs:
-              top_student_statistics = root + course_dir + '/top_statistics_student.csv'
-              f_top_students = open(top_student_statistics,'r')
-              reader = csv.DictReader(f_top_students)
+          print course  
+          k+=6
+          all_x,all_y,names,normalized_y = self.get_files(course, parameter)
+
+          for i in range(len(all_x)):
+              x = all_x[i]
+              y = all_y[i]
 
               plt.subplot(self.rows, self.cols, n)
 
               if parameter == 'Pagerank':
                 plt.axis([0, 15, 0, 0.1])
-                y = [float(row['Pagerank']) for row in reader]
                 
               elif parameter == 'Weighted Out Degree':
                 plt.axis([0, 13, 0, 100])
-                y = [float(row['Weighted Out Degree']) for row in reader]
-                
+
               if not y: 
                 continue
 
@@ -58,12 +87,14 @@ class smallMultiples:
 
               plt.xticks([])
               plt.yticks([])
-              plt.title(course+' '+course_dir)
+              plt.title(course+' '+names[i])
+              ax = plt.gca()
+              ax.set_axis_bgcolor((1,normalized_y[i], 0))
               plt.plot(x, y, linewidth=1.5,color='blue')#tableau20[(n-1)%len(tableau20)])
               n+=1
-        n=i
+          n=k
       plt.show()
 
 if __name__ == "__main__":
   sm  = smallMultiples(8,6)
-  sm.plot('Pagerank')
+  sm.plot('Weighted Out Degree')
