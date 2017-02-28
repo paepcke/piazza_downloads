@@ -52,7 +52,7 @@ class smallMultiples:
       flattened_y = []
 
       for root, dirs, files in os.walk('../stats/'+course+'/'):
-        for course_dir in dirs:
+        for course_dir in sorted(dirs,key=lambda d:d[-2:]):
             #print course_dir
             top_student_statistics = root + course_dir + '/top_statistics_student.csv'
             f_top_students = open(top_student_statistics,'r')
@@ -78,7 +78,7 @@ class smallMultiples:
       color_map = {flattened_y[i]:normalized_y[i] for i in range(len(flattened_y))}
       sorted_map = sorted(color_map.items(), key=operator.itemgetter(1))
       sorted_map = [(elem[0],(1,elem[1],0))  for elem in sorted_map]
-      print sorted_map
+      #print sorted_map
       return all_x,all_y,names,normalized_y,flattened_y
 
 
@@ -95,7 +95,6 @@ class smallMultiples:
           #   patches.append(mpatches.Patch(color=rgb[i], label=course+'->'+str(flattened_y[i])))
           # plt.legend(handles=patches)
           # print flattened_y, ' : ',rgb
-
 
           for i in range(len(all_x)):
               x = all_x[i]
@@ -127,4 +126,4 @@ class smallMultiples:
 
 if __name__ == "__main__":
   sm  = smallMultiples(8,7)
-  sm.plot('Pagerank')
+  sm.plot('Weighted Out Degree')

@@ -28,7 +28,7 @@ def main(getStats = False, combine = False, changePoint = False):
     tasks = []
     for c in COURSES:
         for root, dirs, files in os.walk(DATA_DIRECTORY+c+'/'):
-            for course_dir in dirs:
+            for course_dir in sorted(dirs,key=lambda d:d[-2:]):
                 tasks.append({'input':root+course_dir+'/','db_name':c+course_dir})
     bar = progressbar.ProgressBar(maxval=len(tasks), \
     widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
@@ -46,7 +46,7 @@ def main(getStats = False, combine = False, changePoint = False):
         # path = DATA_DIRECTORY+course
         
         # for root, dirs, files in os.walk(path):
-        #     for course_dir in dirs:
+        #     for course_dir in sorted(dirs,key=lambda d:d[-2:]):
         #         convertToEdgeList(root+'/'+course_dir,course+course_dir,True)
         
         if getStats: 
@@ -56,7 +56,7 @@ def main(getStats = False, combine = False, changePoint = False):
         if changePoint:
             stats_path = '../stats/'+course
             for root, dirs, files in os.walk(stats_path):
-                for course_dir in dirs:
+                for course_dir in sorted(dirs,key=lambda d:d[-2:]):
                     print root + '/' + course_dir
                     file = root + '/' + course_dir + '/top_statistics_student.csv'
                     reader = csv.DictReader(open(file,'r'))
