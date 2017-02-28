@@ -20,7 +20,7 @@ from util import *
 from change_point_detection import *
 
 
-def main(getStats = False, combine = False):
+def main(getStats = False, combine = False, changePoint = False):
     '''
     print 'Fetching records from sql..'
     if not os.path.exists('stats'):
@@ -49,21 +49,22 @@ def main(getStats = False, combine = False):
         #     for course_dir in dirs:
         #         convertToEdgeList(root+'/'+course_dir,course+course_dir,True)
         
-        # if getStats: 
-        #     print 'Calculating statistics for',course
-        #     stats(course,True)
+        if getStats: 
+            print 'Calculating statistics for',course
+            stats(course,all_stats=True)
 
-        stats_path = '../stats/'+course
-        for root, dirs, files in os.walk(stats_path):
-            for course_dir in dirs:
-                print root + '/' + course_dir
-                file = root + '/' + course_dir + '/top_statistics_student.csv'
-                reader = csv.DictReader(open(file,'r'))
-                ts = [float(row['Pagerank']) for row in reader]
-                if len(ts)>2:
-                    model = ChangePointModel()
-                    model.run(ts)
-                    model.plot(ts,'../figures/'+course+'/'+'changepoint_'+'pagerank'+course_dir+'.png','Pagerank')
+        if changePoint:
+            stats_path = '../stats/'+course
+            for root, dirs, files in os.walk(stats_path):
+                for course_dir in dirs:
+                    print root + '/' + course_dir
+                    file = root + '/' + course_dir + '/top_statistics_student.csv'
+                    reader = csv.DictReader(open(file,'r'))
+                    ts = [float(row['Pagerank']) for row in reader]
+                    if len(ts)>2:
+                        model = ChangePointModel()
+                        model.run(ts)
+                        model.plot(ts,'../figures/'+course+'/'+'changepoint_'+'pagerank'+course_dir+'.png','Pagerank')
 
     if getStats and combine:
         print 'Combining stats for all courses------------------------------------------'
@@ -75,4 +76,4 @@ if __name__ == '__main__':
     DB_PARAMS['password'] = ''
   elif len(DB_PARAMS['password']) == 0:
     DB_PARAMS['password'] = getpass.getpass('MySQL password for user {0}:'.format(DB_PARAMS['user'])) 
-  main(True,False)
+  main(getStats=True)

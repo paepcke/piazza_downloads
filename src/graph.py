@@ -45,20 +45,23 @@ class Graph:
     def get_general_properties(self,best_students=None,best_instructors=None,students=None,instructors=None,sub=False,rest_students=None, rest_instructors=None):
         self.num_nodes =  self.G.number_of_nodes()
         self.num_edges =  self.G.number_of_edges()
+        self.active_nodes = sum([1 for i in self.G.degree().values() if i!=0])
         self.density =  nx.density(self.G)
-        self.in_degree = sum(self.G.in_degree().values())/float(self.num_nodes)
-        self.out_degree = sum(self.G.out_degree().values())/float(self.num_nodes)
-        self.degree = sum(self.G.degree().values())/float(self.num_nodes)
-        self.weighted_degree=sum(self.G.degree(weight='weight').values())/float(self.num_nodes)
+        self.in_degree = sum(self.G.in_degree().values())
+        self.out_degree = sum(self.G.out_degree().values())
+        self.degree = sum(self.G.degree().values())
+        self.weighted_in_degree = sum(self.G.in_degree(weight='weight').values())
+        self.weighted_out_degree = sum(self.G.out_degree(weight='weight').values())
+        self.weighted_degree=sum(self.G.degree(weight='weight').values())
         self.nodes_with_self_loops = len(self.G.nodes_with_selfloops())
         self.scc = len(max(nx.strongly_connected_components(self.G),key=len))
         self.wcc = len(max(nx.weakly_connected_components(self.G),key=len))
         self.max_clique = list(clique.max_clique(self.H))
-        self.betweenness_centrality = sum(nx.betweenness_centrality(self.G).values())/float(self.num_nodes)
-        self.closeness_centrality = sum(nx.closeness_centrality(self.G).values())/float(self.num_nodes)
-        self.degree_centrality = sum(nx.degree_centrality(self.G).values())/float(self.num_nodes)
-        self.eigenvector_centrality = sum(nx.eigenvector_centrality(self.G,max_iter=1000).values())/float(self.num_nodes)
-        self.clustering_coeff =  sum(nx.clustering(self.H).values())/float(self.num_nodes)
+        self.betweenness_centrality = sum(nx.betweenness_centrality(self.G).values())
+        self.closeness_centrality = sum(nx.closeness_centrality(self.G).values())
+        self.degree_centrality = sum(nx.degree_centrality(self.G).values())
+        self.eigenvector_centrality = sum(nx.eigenvector_centrality(self.G,max_iter=1000).values())
+        self.clustering_coeff =  sum(nx.clustering(self.H).values())
         #self.simple_cycles = len(list(nx.simple_cycles(self.G)))
         #self.eccentricity = sum(nx.eccentricity(self.G).values())/float(self.num_nodes)
         #self.connectivity = self.G.all_pairs_node_connectivity()/float(self.num_nodes)
@@ -88,6 +91,7 @@ class Graph:
             # calculation for parameters for best instructors, taking top 2 instructors
             best_indeg_ins,best_outdeg_ins,best_weighteddeg_ins,best_pagerank_ins = get_best_parameters(instructors, limit2, param_list)
             return [best_indeg_student,best_outdeg_student,best_weighteddeg_student,best_pagerank_student],[best_indeg_ins,best_outdeg_ins,best_weighteddeg_ins,best_pagerank_ins]
+
 
     def write_graph(self):
         new_file = self.path[:len(self.path)-len(self.path.split('/')[-1])]+'graph.graphml'
@@ -121,16 +125,24 @@ print 'Max PageRank value: ',G1.max_pagerank
 print G1.title
 '''
 
-def stats(course,divide=False):
+def stats(course,divide=False,all_stats=False):
     if not os.path.exists('../stats/'+course):
         os.makedirs('../stats/'+course)
-    f_out = open('../stats/'+course+'/statistics.csv','w')
-    fieldnames = ['Course','Nodes', 'Edges','Avg In Degree','Avg Out Degree','Avg Degree','Avg Weighted Degree', 'Density', 'Largest Strongly Connected Component','Largest Weakly Connected Component', 'Average Betweenness Centrality', 'Average Closeness Centrality', 'Average Degree Centrality', 'Average Eigenvector Centrality', 'Average Clustering Coefficient', 'Average Hub Score', 'Average Authority Score', 'Max Pagerank']
-    writer = csv.DictWriter(f_out, fieldnames=fieldnames)
-    writer.writeheader()
+    f_out = open('../stats/'+course+'/average_stats.csv','w')
+
+    if all_stats:
+        f_out_all_stats = open('../stats/'+course+'/stats.csv','w')
+
+        fieldnames_all = ['Offering','Nodes','Edges','Weighted In Degree','Weighted Out Degree','Weighted Degree','Density','Active Participants', 'Size of largest strongly connected component', 'Size of largest weakly connected component']
+        writer_all = csv.DictWriter(f_out_all_stats, fieldnames=fieldnames_all)
+        writer_all.writeheader()
 
     for root, dirs, files in os.walk(DATA_DIRECTORY+course+'/'):
         for course_dir in dirs:
+            fieldnames = ['Course','Nodes', 'Edges','Avg In Degree','Avg Out Degree','Avg Degree','Avg Weighted Degree', 'Density', 'Largest Strongly Connected Component','Largest Weakly Connected Component', 'Average Betweenness Centrality', 'Average Closeness Centrality', 'Average Degree Centrality', 'Average Eigenvector Centrality', 'Average Clustering Coefficient', 'Average Hub Score', 'Average Authority Score', 'Max Pagerank']
+            writer = csv.DictWriter(f_out, fieldnames=fieldnames)
+            writer.writeheader()
+
             G =  Graph(root+course_dir+'/network.csv')
             instructors, students = identify_instructors(root+course_dir)
             best_student_params, best_ins_params = G.get_general_properties(students=students,instructors=instructors)
@@ -141,21 +153,22 @@ def stats(course,divide=False):
             rest_students = [list(set(students)-set(best_students[i])) for i in range(len(best_students))]
             rest_instructors = [list(set(instructors)-set(best_instructors[i])) for i in range(len(best_instructors))]
 
-            writer.writerow({fieldnames[0]:G.title,
+            writer.writerow({
+                fieldnames[0]:G.title,
                 fieldnames[1]:G.num_nodes,
                 fieldnames[2]:G.num_edges,
-                fieldnames[3]:G.in_degree,
-                fieldnames[4]:G.out_degree,
-                fieldnames[5]:G.degree,
-                fieldnames[6]:G.weighted_degree,
+                fieldnames[3]:G.in_degree/float(G.num_nodes),
+                fieldnames[4]:G.out_degree/float(G.num_nodes),
+                fieldnames[5]:G.degree/float(G.num_nodes),
+                fieldnames[6]:G.weighted_degree/float(G.num_nodes),
                 fieldnames[7]:G.density,
                 fieldnames[8]:G.scc,
                 fieldnames[9]:G.wcc,
-                fieldnames[10]:G.betweenness_centrality,
-                fieldnames[11]:G.closeness_centrality,
-                fieldnames[12]:G.degree_centrality,
-                fieldnames[13]:G.eigenvector_centrality,
-                fieldnames[14]:G.clustering_coeff,
+                fieldnames[10]:G.betweenness_centrality/float(G.num_nodes),
+                fieldnames[11]:G.closeness_centrality/float(G.num_nodes),
+                fieldnames[12]:G.degree_centrality/float(G.num_nodes),
+                fieldnames[13]:G.eigenvector_centrality/float(G.num_nodes),
+                fieldnames[14]:G.clustering_coeff/float(G.num_nodes),
                 fieldnames[15]:0,#G.hub,
                 fieldnames[16]:0,#G.auth,
                 fieldnames[15]:G.max_pagerank})
@@ -221,3 +234,21 @@ def stats(course,divide=False):
 
                     else: 
                         break
+
+            if all_stats:
+                writer_all.writerow({
+                                fieldnames_all[0]:course_dir.upper(),
+                                fieldnames_all[1]:G.num_nodes,
+                                fieldnames_all[2]:G.num_edges,
+                                fieldnames_all[3]:G.weighted_in_degree,
+                                fieldnames_all[4]:G.weighted_out_degree,
+                                fieldnames_all[5]:G.weighted_degree,
+                                fieldnames_all[6]:G.density,
+                                fieldnames_all[7]:G.active_nodes,
+                                fieldnames_all[8]:G.scc,
+                                fieldnames_all[9]:G.wcc
+                                })
+
+
+
+                
