@@ -3,9 +3,13 @@ import matplotlib.pyplot as plt
 import sys
 import os
 import csv
+import operator
 import numpy as np
+import matplotlib.patches as mpatches
+
 from os.path import basename, splitext
 from constants import *
+from pylab import *
 
 class smallMultiples:
   def __init__(self, rows, cols):
@@ -16,6 +20,18 @@ class smallMultiples:
               'size'   : 5}
       plt.rc('font', **font)
       plt.subplots_adjust(hspace=0.5)
+      #plt.colorbar()
+      cdict = {'red': ((0.0, 0.0, 0.0),
+                      (0.5, 1.0, 0.7),
+                      (1.0, 1.0, 1.0)),
+              'green': ((0.0, 0.0, 0.0),
+                        (0.5, 1.0, 0.0),
+                        (1.0, 1.0, 1.0)),
+              'blue': ((0.0, 0.0, 0.0),
+                       (0.5, 1.0, 0.0),
+                       (1.0, 0.5, 1.0))}
+      my_cmap = matplotlib.colors.LinearSegmentedColormap('my_colormap',cdict,256)
+      pcolor(rand(10,10),cmap=my_cmap)
 
       # These are the "Tableau 20" colors as RGB.    
       tableau20 = [(31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),    
@@ -37,6 +53,7 @@ class smallMultiples:
 
       for root, dirs, files in os.walk('../stats/'+course+'/'):
         for course_dir in dirs:
+            #print course_dir
             top_student_statistics = root + course_dir + '/top_statistics_student.csv'
             f_top_students = open(top_student_statistics,'r')
             reader = csv.DictReader(f_top_students)
@@ -57,7 +74,12 @@ class smallMultiples:
             flattened_y.append(len(y))
 
       normalized_y = [(i-min(flattened_y))/float((max(flattened_y)-min(flattened_y)+1)) for i in flattened_y]
-      return all_x,all_y,names,normalized_y
+
+      color_map = {flattened_y[i]:normalized_y[i] for i in range(len(flattened_y))}
+      sorted_map = sorted(color_map.items(), key=operator.itemgetter(1))
+      sorted_map = [(elem[0],(1,elem[1],0))  for elem in sorted_map]
+      print sorted_map
+      return all_x,all_y,names,normalized_y,flattened_y
 
 
   def plot(self,parameter):
@@ -65,12 +87,20 @@ class smallMultiples:
       k=1
       for course in COURSES:
           print course  
-          k+=6
-          all_x,all_y,names,normalized_y = self.get_files(course, parameter)
+          k+=7
+          all_x,all_y,names,normalized_y,flattened_y = self.get_files(course, parameter)
+          rgb = [(1,normalized_y[i],0) for i in range(len(normalized_y))]
+          # patches = []
+          # for i in range(len(rgb)):
+          #   patches.append(mpatches.Patch(color=rgb[i], label=course+'->'+str(flattened_y[i])))
+          # plt.legend(handles=patches)
+          # print flattened_y, ' : ',rgb
+
 
           for i in range(len(all_x)):
               x = all_x[i]
               y = all_y[i]
+
 
               plt.subplot(self.rows, self.cols, n)
 
@@ -78,7 +108,7 @@ class smallMultiples:
                 plt.axis([0, 15, 0, 0.1])
                 
               elif parameter == 'Weighted Out Degree':
-                plt.axis([0, 13, 0, 100])
+                plt.axis([0, 13, 0, 82])
 
               if not y: 
                 continue
@@ -96,5 +126,5 @@ class smallMultiples:
       plt.show()
 
 if __name__ == "__main__":
-  sm  = smallMultiples(8,6)
-  sm.plot('Weighted Out Degree')
+  sm  = smallMultiples(8,7)
+  sm.plot('Pagerank')
