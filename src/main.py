@@ -78,4 +78,4 @@ if __name__ == '__main__':
     DB_PARAMS['password'] = ''
   elif len(DB_PARAMS['password']) == 0:
     DB_PARAMS['password'] = getpass.getpass('MySQL password for user {0}:'.format(DB_PARAMS['user'])) 
-  main(edgelist=False, getStats=False, changePoint = True)
+  main(edgelist=False, getStats=True, changePoint = False)

@@ -79,42 +79,51 @@ We used two criteria for selecting the courses to analyze. We favored
 those that had comparatively large numbers of student posts, and we
 tried to cover courses from many schools and departments. We in
 particular sought to include Humanities courses that made use of
-Piazza for class discussion. Table~\ref{tab:simpleCrsStats} summarizes
-our choice.
-\begin{table}[]
-\centering
-\caption{Summary of Courses Used for Analysis}
-\label{tab:simpleCrseStats}
-\begin{tabular}{lllll}
-\multicolumn{1}{c}{\textbf{Course}}                                                  & \multicolumn{1}{c}{\textbf{Offering}} & \multicolumn{1}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Number of\\ students\end{tabular}}} & \multicolumn{1}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Students\\ with posts\end{tabular}}} & \multicolumn{1}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Percentage\\ forum participation\end{tabular}}} \\
-\textbf{\begin{tabular}[c]{@{}l@{}}Artificial\\   Intelligence\end{tabular}}         & FALL12                                & 192                                                                                       & 106                                                                                        & 55\%                                                                                                  \\
-\textbf{}                                                                            & FALL13                                & 278                                                                                       & 195                                                                                        & 70\%                                                                                                  \\
-\textbf{}                                                                            & FALL14                                & 435                                                                                       & 291                                                                                        & 67\%                                                                                                  \\
-\textbf{}                                                                            & FALL15                                & 494                                                                                       & 357                                                                                        & 72\%                                                                                                  \\
-\textbf{}                                                                            & FALL16                                & 782                                                                                       & 529                                                                                        & 68\%                                                                                                  \\
-\textbf{}                                                                            & SUMMER13                              & 137                                                                                       & 81                                                                                         & 59\%                                                                                                  \\
-\textbf{Machine Learning}                                                            & FALL11                                & 356                                                                                       & 166                                                                                        & 47\%                                                                                                  \\
-\textbf{}                                                                            & FALL12                                & 581                                                                                       & 283                                                                                        & 49\%                                                                                                  \\
-\textbf{}                                                                            & FALL13                                & 776                                                                                       & 383                                                                                        & 49\%                                                                                                  \\
-\textbf{}                                                                            & FALL14                                & 820                                                                                       & 449                                                                                        & 55\%                                                                                                  \\
-\textbf{}                                                                            & FALL15                                & 827                                                                                       & 489                                                                                        & 59\%                                                                                                  \\
-\textbf{}                                                                            & FALL16                                & 803                                                                                       & 393                                                                                        & 49\%                                                                                                  \\
-\textbf{}                                                                            & SPRING16                              & 331                                                                                       & 189                                                                                        & 57\%                                                                                                  \\
-\textbf{Computer Vision}                                                             & FALL11                                & 59                                                                                        & 29                                                                                         & 49\%                                                                                                  \\
-\textbf{}                                                                            & FALL12                                & 120                                                                                       & 62                                                                                         & 52\%                                                                                                  \\
-\textbf{}                                                                            & SPRING16                              & 208                                                                                       & 150                                                                                        & 72\%                                                                                                  \\
-\textbf{}                                                                            & WINTER14                              & 152                                                                                       & 101                                                                                        & 66\%                                                                                                  \\
-\textbf{}                                                                            & WINTER15                              & 180                                                                                       & 125                                                                                        & 69\%                                                                                                  \\
-\textbf{Decision Analysis}                                                           & FALL15                                & 176                                                                                       & 100                                                                                        & 57\%                                                                                                  \\
-\textbf{}                                                                            & FALL16                                & 156                                                                                       & 104                                                                                        & 67\%                                                                                                  \\
-\textbf{\begin{tabular}[c]{@{}l@{}}Computational Molecular\\   Biology\end{tabular}} & FALL11                                & 96                                                                                        & 61                                                                                         & 64\%                                                                                                  \\
-\textbf{}                                                                            & FALL12                                & 101                                                                                       & 67                                                                                         & 66\%                                                                                                  \\
-\textbf{}                                                                            & FALL13                                & 123                                                                                       & 80                                                                                         & 65\%                                                                                                  \\
-\textbf{}                                                                            & FALL14                                & 140                                                                                       & 103                                                                                        & 74\%                                                                                                  \\
-\textbf{}                                                                            & FALL15                                & 147                                                                                       & 93                                                                                         & 63\%                                                                                                  \\
-\textbf{}                                                                            & FALL16                                & 120                                                                                       & 86                                                                                         & 72\%                                                                                                 
-\end{tabular}
-\end{table}
+ Piazza for class discussion. Table~\ref{tab:simpleCrsStats} summarizes
+ our choice.
+ 
+ \begin{figure}[htp]
+       \centering
+       \includegraphics[width=1.2\textwidth]{Figs/nodes2.pdf}
+       \caption{\textnormal{Number of users, active users and their degrees}}
+       \label{fig:graphExpl}
+\end{figure}
+ 
+ 
+% \begin{table}[]
+% \centering
+% \caption{Summary of Courses Used for Analysis}
+% \label{tab:simpleCrseStats}
+% \begin{tabular}{lllll}
+% \multicolumn{1}{c}{\textbf{Course}}                                                  & \multicolumn{1}{c}{\textbf{Offering}} & \multicolumn{1}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Number of\\ students\end{tabular}}} & \multicolumn{1}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Students\\ with posts\end{tabular}}} & \multicolumn{1}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Percentage\\ forum participation\end{tabular}}} \\
+% \textbf{\begin{tabular}[c]{@{}l@{}}Artificial\\   Intelligence\end{tabular}}         & FALL12                                & 192                                                                                       & 106                                                                                        & 55\%                                                                                                  \\
+% \textbf{}                                                                            & FALL13                                & 278                                                                                       & 195                                                                                        & 70\%                                                                                                  \\
+% \textbf{}                                                                            & FALL14                                & 435                                                                                       & 291                                                                                        & 67\%                                                                                                  \\
+% \textbf{}                                                                            & FALL15                                & 494                                                                                       & 357                                                                                        & 72\%                                                                                                  \\
+% \textbf{}                                                                            & FALL16                                & 782                                                                                       & 529                                                                                        & 68\%                                                                                                  \\
+% \textbf{}                                                                            & SUMMER13                              & 137                                                                                       & 81                                                                                         & 59\%                                                                                                  \\
+% \textbf{Machine Learning}                                                            & FALL11                                & 356                                                                                       & 166                                                                                        & 47\%                                                                                                  \\
+% \textbf{}                                                                            & FALL12                                & 581                                                                                       & 283                                                                                        & 49\%                                                                                                  \\
+% \textbf{}                                                                            & FALL13                                & 776                                                                                       & 383                                                                                        & 49\%                                                                                                  \\
+% \textbf{}                                                                            & FALL14                                & 820                                                                                       & 449                                                                                        & 55\%                                                                                                  \\
+% \textbf{}                                                                            & FALL15                                & 827                                                                                       & 489                                                                                        & 59\%                                                                                                  \\
+% \textbf{}                                                                            & FALL16                                & 803                                                                                       & 393                                                                                        & 49\%                                                                                                  \\
+% \textbf{}                                                                            & SPRING16                              & 331                                                                                       & 189                                                                                        & 57\%                                                                                                  \\
+% \textbf{Computer Vision}                                                             & FALL11                                & 59                                                                                        & 29                                                                                         & 49\%                                                                                                  \\
+% \textbf{}                                                                            & FALL12                                & 120                                                                                       & 62                                                                                         & 52\%                                                                                                  \\
+% \textbf{}                                                                            & SPRING16                              & 208                                                                                       & 150                                                                                        & 72\%                                                                                                  \\
+% \textbf{}                                                                            & WINTER14                              & 152                                                                                       & 101                                                                                        & 66\%                                                                                                  \\
+% \textbf{}                                                                            & WINTER15                              & 180                                                                                       & 125                                                                                        & 69\%                                                                                                  \\
+% \textbf{Decision Analysis}                                                           & FALL15                                & 176                                                                                       & 100                                                                                        & 57\%                                                                                                  \\
+% \textbf{}                                                                            & FALL16                                & 156                                                                                       & 104                                                                                        & 67\%                                                                                                  \\
+% \textbf{\begin{tabular}[c]{@{}l@{}}Computational Molecular\\   Biology\end{tabular}} & FALL11                                & 96                                                                                        & 61                                                                                         & 64\%                                                                                                  \\
+% \textbf{}                                                                            & FALL12                                & 101                                                                                       & 67                                                                                         & 66\%                                                                                                  \\
+% \textbf{}                                                                            & FALL13                                & 123                                                                                       & 80                                                                                         & 65\%                                                                                                  \\
+% \textbf{}                                                                            & FALL14                                & 140                                                                                       & 103                                                                                        & 74\%                                                                                                  \\
+% \textbf{}                                                                            & FALL15                                & 147                                                                                       & 93                                                                                         & 63\%                                                                                                  \\
+% \textbf{}                                                                            & FALL16                                & 120                                                                                       & 86                                                                                         & 72\%                                                                                                 
+% \end{tabular}
+% \end{table}
 
 From the forum posts of these data we constructed one social graph for
 each course offering.
@@ -225,14 +234,15 @@ contributions at each checkpoint.
 
 
 
-\begin{table}[]
+\begin{table*}[t]
 \centering
-\resizebox{\columnwidth*2}{!}{%
+\resizebox{\columnwidth}{!}{%
 \caption{Summary of Examined Courses}
 \label{tab:courseStats}
-\begin{tabular}{@{}llllllllll@{}}
+\begin{tabular}{@{}|>{\columncolor[gray]{0.92}}c|c|c|c|c|c|c|c|c|c|@{}}
 \hline
-\textbf{Course} & \textbf{Offering} & \textbf{Nodes} & \textbf{Edges}  & \textbf{Weighted OutDeg}  & \textbf{Density} & \textbf{Active Participants} & \textbf{Largest SCC} & \textbf{Largest WCC} \\ \hline
+\rowcolor{green!25}
+\textbf{Course} & \textbf{Offering} & \textbf{Nodes} & \textbf{Edges}  & \textbf{Contributions}  & \textbf{Density} & \textbf{Active Participants} & \textbf{Largest SCC} & \textbf{Largest WCC} \\ \hline
 \textbf{Artificial Intelligence}  & FALL12            & 192            & 414                                & 893  &0.011289267015706806                                            & 106                          & 52                                                    & 105                                                 \\ \hline
                 & FALL13            & 278            & 1396           & 4629 &0.018128457522790433                                                                     & 195                          & 130                                                   & 194                                                 \\\hline
                 & FALL14            & 435            & 1423                                   & 4352 &0.007537475501880396                                              & 291                          & 149                                                   & 290                                                 \\  \hline
@@ -261,15 +271,48 @@ contributions at each checkpoint.
                   & FALL13   & 123   & 490   & 1279                          & 0.03265360522457684  & 80                  & 52                                           & 80                                         \\ \hline
                   & FALL14   & 140   & 527   & 1122                          & 0.02708119218910586  & 103                 & 66                                           & 103                                        \\ \hline
                   & FALL15   & 147   & 396   & 797                           & 0.018451216102879506 & 93                  & 45                                           & 92                                         \\ \hline
-                  & FALL16   & 120   & 384   & 886                           & 0.02689075630252101  & 86                  & 54                                           & 86                                        
-\end{tabular}
-}
-\end{table}
+                  & FALL16   & 120   & 384   & 886                           & 0.02689075630252101  & 86                  & 54                                           & 86       \\                                 
+\hline
 
+\textbf{International Urbanization Seminar} & FALL14   & 34    & 61    & 419                             & 0.054367201426024955 & 23                  & 9                                            & 23                                         \\ \hline
+                    & SPRING14 & 35    & 79    & 379                           & 0.06638655462184874  & 26                  & 8                                            & 26                                         \\ \hline
+                    & SUMMER14 & 28    & 67    & 224                             & 0.08862433862433862  & 20                  & 6                                            & 20                                         \\ \hline
+                    & FALL15   & 46    & 98    & 352                            & 0.04734299516908213  & 36                  & 19                                           & 36                                         \\ \hline
+                    & FALL16   & 44    & 42    & 165                           & 0.022198731501057084 & 31                  & 4                                            & 31                                         \\ \hline
+\textbf{Cell and Developmental Biology} & WINTER12 & 214   & 200   & 535                           & 0.004387696897898293  & 65                  & 9                                            & 65                                         \\ \hline
+                  & WINTER13 & 157   & 140   & 356                           & 0.0057161522129675    & 55                  & 6                                            & 55                                         \\ \hline
+                  & WINTER14 & 140   & 61    & 85                            & 0.0031346351490236382 & 37                  & 1                                            & 35                                         \\ \hline
+                  & WINTER15 & 117   & 86    & 135                           & 0.006336575302092543  & 43                  & 5                                            & 43                                         \\ \hline
+                  & WINTER16 & 136   & 105   & 297                           & 0.005718954248366013  & 49                  & 3                                            & 49                                         \\ \hline
+\textbf{Economic Analysis} & FALL14   & 138   & 80    & 185                            & 0.004231460911879826  & 50                  & 4                                            & 50                                         \\ \hline
+                & WINTER15 & 109   & 54    & 142                        & 0.0045871559633027525 & 33                  & 2                                            & 33                                         \\ \hline
+                & FALL16   & 217   & 116   & 460                         & 0.002474825055470217  & 65                  & 10                                           & 65                                         \\ \hline
+                & SUMMER16 & 12    & 8     & 21                         & 0.06060606060606061   & 5                   & 2                                            & 4                                          \\ \hline
+                & WINTER16 & 106   & 74    & 259                         & 0.006648697214734951  & 39                  & 12                                           & 38                                         \\ \hline
+\textbf{Indigenous Cultural Heritage} & FALL15   & 11    & 8     & 29                               & 0.07272727272727272 & 5                   & 1                                            & 5                                          \\ \hline
+                           & FALL16   & 21    & 47    & 62                              & 0.11190476190476191 & 21                  & 5                                            & 20                                         \\ \hline
+\end{tabular}
+
+}
+\end{table*}
 
 \begin{figure}[htp]
        \centering
-       \includegraphics{Figs/women_health_summer2015_top10.png}
+       \includegraphics[width=1\textwidth]{Figs/pagerank_sm_color.png}
+       \caption{\textnormal{Comparison of Pageranks for top 10\% students}}
+       \label{fig:womenHealth}
+\end{figure}
+
+\begin{figure}[htp]
+       \centering
+       \includegraphics[width=1\textwidth]{Figs/weighted_out_degree_sm_color.png}
+       \caption{\textnormal{Comparison of Weighted Out Degrees for top 10\% students}}
+       \label{fig:womenHealth}
+\end{figure}
+
+\begin{figure}[htp]
+       \centering
+       \includegraphics[width=1\textwidth]{Figs/women_health_summer2015_top10.png}
        \caption{\textnormal{A MOOC forum post comparison: Women's
            Global Health.}}
        \label{fig:womenHealth}
@@ -281,7 +324,7 @@ contributions at each checkpoint.
 Here is an example chart of the correct size.
 \begin{figure}[htp]
        \centering
-       \includegraphics{Figs/exampleChart1.png}
+       \includegraphics[width=0.5\textwidth]{Figs/exampleChart1.png}
        \caption{\textnormal{Wrong numbers, just an example. See ~/tmp/forumPromptsTableauChartsSample.twb}}
        \label{fig:exampleChart}
 \end{figure}

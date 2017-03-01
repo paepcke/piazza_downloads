@@ -17,9 +17,9 @@ class smallMultiples:
       self.cols = cols
       plt.figure(1)
       font = {'weight' : 'medium',
-              'size'   : 5}
+              'size'   : 4}
       plt.rc('font', **font)
-      plt.subplots_adjust(hspace=0.5)
+      plt.subplots_adjust(hspace=0.6)
 
   def get_files(self,course, parameter):
       all_x = []
@@ -98,4 +98,4 @@ class smallMultiples:
 if __name__ == "__main__":
   sm  = smallMultiples(12,7)
   #sm.plot('Pagerank')
-  sm.plot('Pagerank')
+  sm.plot('Weighted Out Degree')
