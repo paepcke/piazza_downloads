@@ -212,7 +212,7 @@ def convertToEdgeList(directory,name,divide=False):
 
         # writes another subnetwork as soon as the difference in timestamps becomes greater than 7
         if divide and (d2-d1).days/7>=1:    
-            print 'Week: ',num_week, ' Dates: ', d1, ' To: ', d2        
+            #print 'Week: ',num_week, ' Dates: ', d1, ' To: ', d2        
             write_network_to_file(directory+'/subnetwork'+str(num_week)+'.csv',user_edges,None,0)
             flag=True
             num_week+=1 

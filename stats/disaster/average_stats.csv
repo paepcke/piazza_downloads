@@ -1,0 +1,2 @@
+Course,Nodes,Edges,Avg In Degree,Avg Out Degree,Avg Degree,Avg Weighted Degree,Density,Largest Strongly Connected Component,Largest Weakly Connected Component,Average Betweenness Centrality,Average Closeness Centrality,Average Degree Centrality,Average Eigenvector Centrality,Average Clustering Coefficient,Average Hub Score,Average Authority Score,Max Pagerank
+FALL16,19,67,3.526315789473684,3.526315789473684,7.052631578947368,20.0,0.195906432748538,10,11,0.008083935328517372,0.20515749682416348,0.39181286549707606,0.10374262913526458,0.4603174603174603,0.13042762295190377,0,

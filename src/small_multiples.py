@@ -96,6 +96,6 @@ class smallMultiples:
       plt.show()
 
 if __name__ == "__main__":
-  sm  = smallMultiples(8,7)
+  sm  = smallMultiples(12,7)
   #sm.plot('Pagerank')
-  sm.plot('Weighted Out Degree')
+  sm.plot('Pagerank')

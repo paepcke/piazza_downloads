@@ -20,26 +20,26 @@ from util import *
 from change_point_detection import *
 
 
-def main(edgelist=False, getStats = False, combine = False, changePoint = False):
-    '''
-    print 'Fetching records from sql..'
-    if not os.path.exists('stats'):
-        os.makedirs('stats')
-    tasks = []
-    for c in COURSES:
-        for root, dirs, files in os.walk(DATA_DIRECTORY+c+'/'):
-            for course_dir in sorted(dirs,key=lambda d:d[-2:]):
-                tasks.append({'input':root+course_dir+'/','db_name':c+course_dir})
-    bar = progressbar.ProgressBar(maxval=len(tasks), \
-    widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
-    bar.start()
-    i=0
-    for task in tasks:
-        bar.update(i+1)
-        i+=1
-        fetch(task)
-    bar.finish()
-    '''
+def main(fetch_mysql=False, edgelist=False, getStats = False, combine = False, changePoint = False):
+    if fetch_mysql:
+        print 'Fetching records from sql..'
+        if not os.path.exists('stats'):
+            os.makedirs('stats')
+        tasks = []
+        for c in COURSES:
+            for root, dirs, files in os.walk(DATA_DIRECTORY+c+'/'):
+                for course_dir in sorted(dirs,key=lambda d:d[-2:]):
+                    tasks.append({'input':root+course_dir+'/','db_name':c+course_dir})
+        bar = progressbar.ProgressBar(maxval=len(tasks), \
+        widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
+        bar.start()
+        i=0
+        for task in tasks:
+            bar.update(i+1)
+            i+=1
+            fetch(task)
+        bar.finish()
+    
     print 'Creating Network-----------------------------------------------'
     for course in COURSES:
         print course
@@ -78,4 +78,4 @@ if __name__ == '__main__':
     DB_PARAMS['password'] = ''
   elif len(DB_PARAMS['password']) == 0:
     DB_PARAMS['password'] = getpass.getpass('MySQL password for user {0}:'.format(DB_PARAMS['user'])) 
-  main(edgelist=False, getStats=True, changePoint = True)
+  main(edgelist=False, getStats=False, changePoint = True)

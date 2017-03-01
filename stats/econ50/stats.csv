@@ -1,0 +1,6 @@
+Offering,Nodes,Edges,Weighted In Degree,Weighted Out Degree,Weighted Degree,Density,Active Participants,Size of largest strongly connected component,Size of largest weakly connected component
+FALL14,138,80,185,185,370,0.004231460911879826,50,4,50
+WINTER15,109,54,142,142,284,0.0045871559633027525,33,2,33
+FALL16,217,116,460,460,920,0.002474825055470217,65,10,65
+SUMMER16,12,8,21,21,42,0.06060606060606061,5,2,4
+WINTER16,106,74,259,259,518,0.006648697214734951,39,12,38
