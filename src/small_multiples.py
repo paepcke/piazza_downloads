@@ -20,30 +20,6 @@ class smallMultiples:
               'size'   : 5}
       plt.rc('font', **font)
       plt.subplots_adjust(hspace=0.5)
-      #plt.colorbar()
-      cdict = {'red': ((0.0, 0.0, 0.0),
-                      (0.5, 1.0, 0.7),
-                      (1.0, 1.0, 1.0)),
-              'green': ((0.0, 0.0, 0.0),
-                        (0.5, 1.0, 0.0),
-                        (1.0, 1.0, 1.0)),
-              'blue': ((0.0, 0.0, 0.0),
-                       (0.5, 1.0, 0.0),
-                       (1.0, 0.5, 1.0))}
-      my_cmap = matplotlib.colors.LinearSegmentedColormap('my_colormap',cdict,256)
-      pcolor(rand(10,10),cmap=my_cmap)
-
-      # These are the "Tableau 20" colors as RGB.    
-      tableau20 = [(31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),    
-                   (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),    
-                   (148, 103, 189), (197, 176, 213), (140, 86, 75), (196, 156, 148),    
-                   (227, 119, 194), (247, 182, 210), (127, 127, 127), (199, 199, 199),    
-                   (188, 189, 34), (219, 219, 141), (23, 190, 207), (158, 218, 229)]    
-        
-      # Scale the RGB values to the [0, 1] range, which is the format matplotlib accepts.    
-      for i in range(len(tableau20)):    
-          r, g, b = tableau20[i]    
-          tableau20[i] = (r / 255., g / 255., b / 255.)
 
   def get_files(self,course, parameter):
       all_x = []
@@ -78,7 +54,7 @@ class smallMultiples:
       color_map = {flattened_y[i]:normalized_y[i] for i in range(len(flattened_y))}
       sorted_map = sorted(color_map.items(), key=operator.itemgetter(1))
       sorted_map = [(elem[0],(1,elem[1],0))  for elem in sorted_map]
-      #print sorted_map
+      print sorted_map
       return all_x,all_y,names,normalized_y,flattened_y
 
 
@@ -89,12 +65,6 @@ class smallMultiples:
           print course  
           k+=7
           all_x,all_y,names,normalized_y,flattened_y = self.get_files(course, parameter)
-          rgb = [(1,normalized_y[i],0) for i in range(len(normalized_y))]
-          # patches = []
-          # for i in range(len(rgb)):
-          #   patches.append(mpatches.Patch(color=rgb[i], label=course+'->'+str(flattened_y[i])))
-          # plt.legend(handles=patches)
-          # print flattened_y, ' : ',rgb
 
           for i in range(len(all_x)):
               x = all_x[i]
@@ -107,7 +77,7 @@ class smallMultiples:
                 plt.axis([0, 15, 0, 0.1])
                 
               elif parameter == 'Weighted Out Degree':
-                plt.axis([0, 13, 0, 82])
+                plt.axis([0, 13, 0, 53])
 
               if not y: 
                 continue
@@ -122,8 +92,10 @@ class smallMultiples:
               plt.plot(x, y, linewidth=1.5,color='blue')#tableau20[(n-1)%len(tableau20)])
               n+=1
           n=k
+      plt.savefig('../figures/'+parameter.lower()+'_sm_color.png')
       plt.show()
 
 if __name__ == "__main__":
   sm  = smallMultiples(8,7)
   sm.plot('Pagerank')
+  #sm.plot('Weighted Out Degree')

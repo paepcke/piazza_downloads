@@ -211,7 +211,8 @@ def convertToEdgeList(directory,name,divide=False):
             user_edges[(children[i],thread_starter)]+=1
 
         # writes another subnetwork as soon as the difference in timestamps becomes greater than 7
-        if divide and (d2-d1).days/7>=1:            
+        if divide and (d2-d1).days/7>=1:    
+            print 'Week: ',num_week, ' Dates: ', d1, ' To: ', d2        
             write_network_to_file(directory+'/subnetwork'+str(num_week)+'.csv',user_edges,None,0)
             flag=True
             num_week+=1 
@@ -419,21 +420,5 @@ if __name__ == "__main__":
             for root, dirs, files in os.walk('../stats/'+course+'/'):
                 for dir in dirs:
                     print root+dir
-                    top_student_statistics = root + dir + '/top_statistics_student.csv'
-                    f_top_students = open(top_student_statistics,'r')
-
-                    reader1 = csv.reader(f_top_students)
-                    # Skipping the header of the csv file
-                    next(reader1, None)
-                    data = list(reader1)
-                    weeks = 1
-                    y1 = []
-                    for row in data:
-                        _,_,deg,_,pagerank = row
-                        y1.append(float(pagerank))
-                    change_point(y1)
-
-
-
-                    # plot_weekly_change_in_parameter(root+dir,'Pagerank',None)
-                    # plot_weekly_change_in_parameter(root+dir,'Weighted Out Degree',None)
+                    plot_weekly_change_in_parameter(root+dir,'Pagerank',None)
+                    plot_weekly_change_in_parameter(root+dir,'Weighted Out Degree',None)

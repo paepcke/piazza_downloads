@@ -20,7 +20,7 @@ from util import *
 from change_point_detection import *
 
 
-def main(getStats = False, combine = False, changePoint = False):
+def main(edgelist=False, getStats = False, combine = False, changePoint = False):
     '''
     print 'Fetching records from sql..'
     if not os.path.exists('stats'):
@@ -43,15 +43,17 @@ def main(getStats = False, combine = False, changePoint = False):
     print 'Creating Network-----------------------------------------------'
     for course in COURSES:
         print course
-        # path = DATA_DIRECTORY+course
-        
-        # for root, dirs, files in os.walk(path):
-        #     for course_dir in sorted(dirs,key=lambda d:d[-2:]):
-        #         convertToEdgeList(root+'/'+course_dir,course+course_dir,True)
-        
-        if getStats: 
-            print 'Calculating statistics for',course
-            stats(course,all_stats=True)
+        if edgelist:
+            path = DATA_DIRECTORY+course
+            
+            for root, dirs, files in os.walk(path):
+                for course_dir in sorted(dirs,key=lambda d:d[-2:]):
+                    print course_dir
+                    convertToEdgeList(root+'/'+course_dir,course+course_dir,True)
+            
+            if getStats: 
+                print 'Calculating statistics for',course
+                stats(course,divide=True,all_stats=True)
 
         if changePoint:
             stats_path = '../stats/'+course
@@ -60,11 +62,11 @@ def main(getStats = False, combine = False, changePoint = False):
                     print root + '/' + course_dir
                     file = root + '/' + course_dir + '/top_statistics_student.csv'
                     reader = csv.DictReader(open(file,'r'))
-                    ts = [float(row['Pagerank']) for row in reader]
+                    ts = [float(row['Weighted Out Degree']) for row in reader]
                     if len(ts)>2:
                         model = ChangePointModel()
                         model.run(ts)
-                        model.plot(ts,'../figures/'+course+'/'+'changepoint_'+'pagerank'+course_dir+'.png','Pagerank')
+                        model.plot(ts,'../figures/'+course+'/'+'changepoint_'+'outdeg'+course_dir+'.png','Weighted Out Degree')
 
     if getStats and combine:
         print 'Combining stats for all courses------------------------------------------'
@@ -76,4 +78,4 @@ if __name__ == '__main__':
     DB_PARAMS['password'] = ''
   elif len(DB_PARAMS['password']) == 0:
     DB_PARAMS['password'] = getpass.getpass('MySQL password for user {0}:'.format(DB_PARAMS['user'])) 
-  main(getStats=True)
+  main(edgelist=True, getStats=True, changePoint = True)
