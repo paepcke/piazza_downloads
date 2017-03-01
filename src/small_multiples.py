@@ -54,7 +54,7 @@ class smallMultiples:
       color_map = {flattened_y[i]:normalized_y[i] for i in range(len(flattened_y))}
       sorted_map = sorted(color_map.items(), key=operator.itemgetter(1))
       sorted_map = [(elem[0],(1,elem[1],0))  for elem in sorted_map]
-      print sorted_map
+      #print sorted_map
       return all_x,all_y,names,normalized_y,flattened_y
 
 
@@ -97,5 +97,5 @@ class smallMultiples:
 
 if __name__ == "__main__":
   sm  = smallMultiples(8,7)
-  sm.plot('Pagerank')
-  #sm.plot('Weighted Out Degree')
+  #sm.plot('Pagerank')
+  sm.plot('Weighted Out Degree')

@@ -37,7 +37,6 @@ class ChangePointModel(object):
         S0_diff = np.subtract(S0_max,S0_min)
 
         best_bootstraps = [bootstrap_cusum[i] for i in S0_diff.argsort()[-5:][::-1]]
-        print len(best_bootstraps)
 
         original_cusum = self.compute_cusum_ts(ts)
         S_max = np.amax(original_cusum)

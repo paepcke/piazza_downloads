@@ -51,7 +51,7 @@ def main(edgelist=False, getStats = False, combine = False, changePoint = False)
                     print course_dir
                     convertToEdgeList(root+'/'+course_dir,course+course_dir,True)
             
-            if getStats: 
+        if getStats: 
                 print 'Calculating statistics for',course
                 stats(course,divide=True,all_stats=True)
 
@@ -78,4 +78,4 @@ if __name__ == '__main__':
     DB_PARAMS['password'] = ''
   elif len(DB_PARAMS['password']) == 0:
     DB_PARAMS['password'] = getpass.getpass('MySQL password for user {0}:'.format(DB_PARAMS['user'])) 
-  main(edgelist=True, getStats=True, changePoint = True)
+  main(edgelist=False, getStats=True, changePoint = True)
