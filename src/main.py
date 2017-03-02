@@ -65,8 +65,8 @@ def main(fetch_mysql=False, edgelist=False, getStats = False, combine = False, c
                     ts = [float(row['Weighted Out Degree']) for row in reader]
                     if len(ts)>2:
                         model = ChangePointModel()
-                        model.run(ts)
-                        model.plot(ts,'../figures/'+course+'/'+'changepoint_'+'outdeg'+course_dir+'.png','Weighted Out Degree')
+                        model.run(ts, course + '/' + course_dir, plot=True)
+                        #model.plot(ts,'../figures/'+course+'/'+'changepoint_'+'outdeg'+course_dir+'.png','Weighted Out Degree')
 
     if getStats and combine:
         print 'Combining stats for all courses------------------------------------------'
@@ -78,4 +78,4 @@ if __name__ == '__main__':
     DB_PARAMS['password'] = ''
   elif len(DB_PARAMS['password']) == 0:
     DB_PARAMS['password'] = getpass.getpass('MySQL password for user {0}:'.format(DB_PARAMS['user'])) 
-  main(edgelist=False, getStats=True, changePoint = False)
+  main(edgelist=False, getStats=False, changePoint = True)

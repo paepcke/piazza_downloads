@@ -26,7 +26,7 @@ class ChangePointModel(object):
         """ Shuffle the time series. """
         return np.random.permutation(ts)
 
-    def bootstrap(self, ts, B=1000):
+    def bootstrap(self, ts, name=None, B=1000,plot=False):
         # Generating a bootstrap sample
         permutations = np.vstack([self.shuffle_timeseries(ts) for i in np.arange(0, B)])
         # Calculating the bootstrap CUSUM
@@ -37,22 +37,38 @@ class ChangePointModel(object):
         S0_min = np.amin(bootstrap_cusum, axis=1)
         S0_diff = np.subtract(S0_max,S0_min)
 
-        best_bootstraps = [bootstrap_cusum[i] for i in S0_diff.argsort()[-5:][::-1]]
-        print best_bootstraps
-        i=1
-        colors = ['r','g','m','k','c']
-        for b in best_bootstraps:
-            i+=1
-            plt.plot(np.array(range(1,len(best_bootstraps[0])+1)),np.array(b),'-o',color=colors[i-2],label='bootstrap'+str(i))
-
         original_cusum = self.compute_cusum_ts(ts)
         S_max = np.amax(original_cusum)
         S_min = np.amin(original_cusum)
         S_diff = np.subtract(S_max,S_min)
 
-        plt.plot(range(1,len(best_bootstraps[0])+1),original_cusum,color='b',linewidth='4',label='Original CUSUM')
-        plt.legend(loc='best')
-        plt.show()
+        if plot:
+            plt.clf()
+            best_bootstraps = [bootstrap_cusum[i] for i in S0_diff.argsort()[-5:][::-1]]
+            i=1
+            colors = ['r','y','m','k','c']
+            for b in best_bootstraps:
+                i+=1
+                plt.plot(np.array(range(1,len(best_bootstraps[0])+1)),np.array(b),'-o',color=colors[i-2],label='bootstrap'+str(i-1))
+
+            plt.plot(range(1,len(best_bootstraps[0])+1),ts ,color = 'g', linewidth='4', label = 'Weighted out degrees')    
+            plt.plot(range(1,len(best_bootstraps[0])+1),original_cusum,color='b',linewidth='4',label='Original CUSUM')
+            
+            ax = plt.gca()
+            # Shrink current axis's height by 10% on the bottom
+            box = ax.get_position()
+            ax.set_position([box.x0, box.y0 + box.height * 0.1,
+                             box.width, box.height * 0.9])
+
+            # Put a legend below current axis
+            ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+                      fancybox=True, shadow=True, ncol=4, fontsize=10)
+
+            #plt.legend(loc='best')
+            plt.title(name)
+            print '../figures/'+name.split('/')[0]+'/cusum_'+name.split('/')[1]+'.png'
+            #plt.show()
+            plt.savefig('../figures/'+name.split('/')[0]+'/cusum_'+name.split('/')[1]+'.png')
 
         return S0_diff,S_diff
 
@@ -73,11 +89,11 @@ class ChangePointModel(object):
     def estimate_best_m(self, ts):
         return np.argmin([self.mean_square_error(ts,m) for m in range(1,len(ts))])
 
-    def run(self, ts, B=1000):
+    def run(self, ts, name=None, B=1000, plot=False):
         N = len(ts)
 
         if len(ts)>1:
-            S0_diff,S_diff = self.bootstrap(ts,B)
+            S0_diff,S_diff = self.bootstrap(ts,name=name, B=B, plot=plot)
             conf  = self.confidence(S0_diff,S_diff)
 
             best_m = self.estimate_best_m(ts)
@@ -116,5 +132,5 @@ if __name__ == "__main__":
           0.007805863541411589, 0.00787893333851693, 0.00779095482226361, 0.0077741221689227894,
           0.007966075694506278, 0.0033839897207213697]
     model = ChangePointModel()
-    model.run(ts)
+    model.run(ts,name='cs221fallsomething',plot=True)
     #model.plot(ts)
