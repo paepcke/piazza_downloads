@@ -208,29 +208,77 @@ signals.
 
 \section{Analysis Procedure}
 
-We computed the average of our chosen social graph measures over the
-students who were in the top 10\% in forum activity as measured across
-the entire course duration.  This average was computed for each week
-of each course. The results provided a week-by-week time series of
-postings and evolving pagerank for these students.
+For each course we identified the top 10\% of forum-contributing
+students as measured by their postings across the entire course. For
+those students we computed the average of our chosen social graph
+measures. This average was computed for each week of each
+offering. The results provided a week-by-week time series of postings
+and evolving pagerank for these students.
 
-Figure~\ref{fig:smOutDeg} shows a summary of these series for some of
-the course offerings. We provide more detailed views further on.
+Figures~\ref{fig:cs229OutDeg} and \ref{fig:cs229PageRank} shows a
+typical time series with weighted out degree on the ordinal, and weeks
+on the abscissa. The line at the bottom shows the median weighted out
+degree across time for this Fall 2016 offering of a machine learning
+class.
 \begin{figure}[htp]
        \centering
-       \includegraphics[width=1.0\textwidth]{Figs/forumNetworkExample.pdf}
-       \caption{\textnormal{Example social graph induced by forum posts.}}
-       \label{fig:smOutDeg}
+       \includegraphics{Figs/comparison_Weighted_Out_Degree_fall16SimplifiedSmall.png}
+       \caption{\textnormal{Forum post contributions by top 10\% of
+           contributors throughout an academic quarter (machine Learning class).}}
+       \label{fig:cs229OutDeg}
+\end{figure}
+\begin{figure}[htp]
+       \centering
+       \includegraphics{Figs/comparison_Pagerank_fall16CS229Tiny.png}
+       \caption{\textnormal{Page rank by top 10\% of
+           contributors throughout an academic quarter (machine Learning class).}}
+       \label{fig:cs229PageRank}
+\end{figure}
+Notice in Figure~\ref{fig:cs229OutDeg} that the successive increases
+in average contribution of the top 10\% appears piecewise
+linear. This behavior could be significant, because sudden
+accelerations in forum contributions could indicate that other
+students might do well to also accelerate their posting. This
+consideration would be particularly strong if the same pattern was
+observable across several offerings of a course.
+
+However, further analysis is required to tell whether these changes
+are significant. We therefore constructed both control charts and
+bootstrap analysis to the measured points. Control charts are of
+significance for our scenario, because breakages across control bounds
+can be observed at any point in time. Instructors could therefore be
+alerted weekly of any students (or average of larger student groups)
+who are atypical in their posting behavior. Bootstrap procedures,
+which permute data points many times, computing target measures like
+means each time require that all data points are available for the
+procedure. On the other hand, these procedures can detect multiple
+change points that occur in the examined data.
+
+We searched for change points via 1000 permutation iterations, and
+show change points at the 99\% confidence
+level. Figure~\ref{fig:cs229ChangePts} shows the change points in out
+degree for the same course offering that is shown in
+Figure~\ref{fig:cs229OutDeg}.
+\begin{figure}[htp]
+       \centering
+       \includegraphics{Figs/changepoint_outdegfall16CS229Tiny.png}
+       \caption{\textnormal{Change points of machine learning course
+           forum postings..}}
+       \label{fig:cs229ChangePts}
 \end{figure}
 
 
-summarizes these data sources. We recomputed the measures for every
-week throughout the quarter of each offering. In order to establish
-values against which to compare each student's measures during those
-weekly checkpoints we each time computed the two measures for ({\em
-  i}) the average of the ten students who overall contributed the
-maximum number of posts, and ({\em ii}) for the median number of
-contributions at each checkpoint.
+
+
+%% Figure~\ref{fig:smOutDeg} shows a summary of these series for some of
+%% the course offerings. We provide more detailed views further on.
+%% \begin{figure}[htp]
+%%        \centering
+%%        \includegraphics[width=1.0\textwidth]{Figs/forumNetworkExample.pdf}
+%%        \caption{\textnormal{Example social graph induced by forum posts.}}
+%%        \label{fig:smOutDeg}
+%% \end{figure}
+
 
 
 
