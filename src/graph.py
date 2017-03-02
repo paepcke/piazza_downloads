@@ -2,6 +2,7 @@ import csv
 import json
 import math
 import networkx as nx
+import matplotlib.pyplot as plt
 
 from constants import *
 from networkx.algorithms.approximation import clique
@@ -24,6 +25,7 @@ Methods
     - write_graph(): 
             Writes a network to '.graphml' file for Gephi visualizations
 '''
+
 class Graph:
     def __init__(self,path):
         self.path = path
@@ -75,28 +77,35 @@ class Graph:
         self.best_student_params = None
         self.best_ins_params = None
 
-        param_list =[self.G.in_degree(weight='weight'),self.G.out_degree(weight='weight'),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)]
+        self.param_list =[self.G.in_degree(weight='weight'),self.G.out_degree(weight='weight'),self.G.degree(weight='weight'),nx.pagerank(self.G, alpha=0.9)]
 
         if sub:
-            self.best_student_params = find_average(best_students,param_list)
-            self.best_ins_params = find_average(best_instructors,param_list)
-            self.student_median = find_median(rest_students,param_list)
+            self.best_student_params = find_average(best_students,self.param_list)
+            self.best_ins_params = find_average(best_instructors,self.param_list)
+            self.student_median = find_median(rest_students,self.param_list)
 
         if not sub:
             # calculation for parameters for best students, taking top 10% students
             limit1 = int(math.ceil(0.1*len(students)))
             limit2 = int(math.ceil(0.1*len(instructors)))
 
-            best_indeg_student,best_outdeg_student,best_weighteddeg_student,best_pagerank_student = get_best_parameters(students, limit1, param_list)
+            best_indeg_student,best_outdeg_student,best_weighteddeg_student,best_pagerank_student = get_best_parameters(students, limit1, self.param_list)
             # calculation for parameters for best instructors, taking top 2 instructors
-            best_indeg_ins,best_outdeg_ins,best_weighteddeg_ins,best_pagerank_ins = get_best_parameters(instructors, limit2, param_list)
+            best_indeg_ins,best_outdeg_ins,best_weighteddeg_ins,best_pagerank_ins = get_best_parameters(instructors, limit2, self.param_list)
             return [best_indeg_student,best_outdeg_student,best_weighteddeg_student,best_pagerank_student],[best_indeg_ins,best_outdeg_ins,best_weighteddeg_ins,best_pagerank_ins]
 
 
-    def write_graph(self):
-        new_file = self.path[:len(self.path)-len(self.path.split('/')[-1])]+'graph.graphml'
+    def write_graph(self,path=None):
+        if path: new_file = path
+        else:
+            new_file = self.path[:len(self.path)-len(self.path.split('/')[-1])]+'graph.graphml'
         nx.write_graphml(self.G,new_file)
         print new_file+ ' written...'
+
+    def draw_graph(self):
+        nx.draw(self.G, node_color='c',edge_color='k',pos=nx.spring_layout(self.G,scale=7) )
+        plt.draw()
+        plt.show()
 
 '''
 print G1.title
@@ -139,16 +148,21 @@ def stats(course,divide=False,all_stats=False):
 
     for root, dirs, files in os.walk(DATA_DIRECTORY+course+'/'):
         for course_dir in sorted(dirs,key=lambda d:d[-2:]):
+            print course_dir
             fieldnames = ['Course','Nodes', 'Edges','Avg In Degree','Avg Out Degree','Avg Degree','Avg Weighted Degree', 'Density', 'Largest Strongly Connected Component','Largest Weakly Connected Component', 'Average Betweenness Centrality', 'Average Closeness Centrality', 'Average Degree Centrality', 'Average Eigenvector Centrality', 'Average Clustering Coefficient', 'Average Hub Score', 'Average Authority Score', 'Max Pagerank']
             writer = csv.DictWriter(f_out, fieldnames=fieldnames)
             writer.writeheader()
 
             G =  Graph(root+course_dir+'/network.csv')
+            print root+course_dir+'/network.csv'
+            #G.write_graph()
             instructors, students = identify_instructors(root+course_dir)
             best_student_params, best_ins_params = G.get_general_properties(students=students,instructors=instructors)
 
             # top students and instructors
             best_students = [k.keys() for k in best_student_params]
+
+            print 'Weighted out degrees :',best_students[1]
             best_instructors = [k.keys() for k in best_ins_params]
             rest_students = [list(set(students)-set(best_students[i])) for i in range(len(best_students))]
             rest_instructors = [list(set(instructors)-set(best_instructors[i])) for i in range(len(best_instructors))]
@@ -191,10 +205,12 @@ def stats(course,divide=False,all_stats=False):
                 writer_sub_median = csv.DictWriter(f_out_sub_median_students, fieldnames=fieldnames_sub)
                 writer_sub_median.writeheader()
 
+
                 for i in range(1,20):
                     if os.path.exists(root+course_dir+'/subnetwork'+str(i)+'.csv'):
                         #print root+course_dir+'/subnetwork'+str(i)+'.csv'
                         G_sub =  Graph(root+course_dir+'/subnetwork'+str(i)+'.csv')
+                        #G_sub.write_graph(root+course_dir+'/subnetwork'+str(i)+'.graphml')
 
                         G_sub.get_general_properties(best_students=best_students,best_instructors=best_instructors,sub=True, students=students,rest_students=rest_students, rest_instructors=rest_instructors)
 

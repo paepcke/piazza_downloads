@@ -1,6 +1,7 @@
 import numpy as np
 import spc
 import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
 
 '''
 Bootstrap implementation based on www.variation.com/cpa/tech/changepoint.html
@@ -37,11 +38,21 @@ class ChangePointModel(object):
         S0_diff = np.subtract(S0_max,S0_min)
 
         best_bootstraps = [bootstrap_cusum[i] for i in S0_diff.argsort()[-5:][::-1]]
+        print best_bootstraps
+        i=1
+        colors = ['r','g','m','k','c']
+        for b in best_bootstraps:
+            i+=1
+            plt.plot(np.array(range(1,len(best_bootstraps[0])+1)),np.array(b),'-o',color=colors[i-2],label='bootstrap'+str(i))
 
         original_cusum = self.compute_cusum_ts(ts)
         S_max = np.amax(original_cusum)
         S_min = np.amin(original_cusum)
         S_diff = np.subtract(S_max,S_min)
+
+        plt.plot(range(1,len(best_bootstraps[0])+1),original_cusum,color='b',linewidth='4',label='Original CUSUM')
+        plt.legend(loc='best')
+        plt.show()
 
         return S0_diff,S_diff
 
@@ -106,4 +117,4 @@ if __name__ == "__main__":
           0.007966075694506278, 0.0033839897207213697]
     model = ChangePointModel()
     model.run(ts)
-    model.plot(ts)
+    #model.plot(ts)
