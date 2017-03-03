@@ -2,3 +2,34 @@
 
     o Making grades depend on forum participation decreases intrinsic
       motivation. 
+
+1. Forum participation in residential settings work similarly
+    across offerings of the same course. Except that total use
+    of forum is increasing over the years.
+    
+2. Even across different courses, participation/page rank unfold along
+    a similar pattern (not sure at all this is true).  Course
+    offerings have consistent change points over the years.
+    
+3. We do not observe differences in top-10% participation in courses
+    where 2% credit is offered, vs. not.
+    
+4. Given 1, consistent critical points offer themselves during the
+    quarter where students might get contacted about participation.
+
+5. We confirm MOOC findings that page rank is focused on a few
+    students.
+
+6. The main differences between science/eng, and other courses are:
+      ???
+
+So, tomorrow, I'll try to find evidence for those points.
+
+- I'll check the .csv for active-node numbers.
+- I'll count how often change points occur in the same week(s) across
+    the offerings of the same course (to get a percentage).
+- I'll compare the above two across courses.
+- Not sure right now how best to check 5, but I'll think of something.
+- 6 will fall out of the above.
+
+Does that sound about right?
