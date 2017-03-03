@@ -3,6 +3,8 @@
 
 \section{Introduction}
 
+%% Don't forget:
+%% - Mention control charts as real-time tools. Snippet at end.
 %% Points to make:
 %% - Why forum important
 %%     o For humanities
@@ -153,14 +155,14 @@ quality, for which a richer model would be required.
 Many measures are used to quantify various aspects of social graphs
 \cite{hann2005, lesk14}. Not all are meaningful in the context of
 education-related forum interactions. We focus here on two measures:
-{\em out-degree}, and {\em page rank}. Figure~\ref{fig:graphExpl}
+{\em out-degree}, and {\em page rank}. Figure~\ref{fig:forumGraph}
 illustrates.
 
 \begin{figure}[htp]
        \centering
        \includegraphics[width=1.0\textwidth]{Figs/forumNetworkExample.pdf}
        \caption{\textnormal{Example social graph induced by forum posts.}}
-       \label{fig:graphExpl}
+       \label{fig:forumGraph}
 \end{figure}
 
 Nodes $A$, $B$, $C$, $D$, and $E$ represent students. The link from
@@ -224,48 +226,51 @@ class.
        \centering
        \includegraphics{Figs/comparison_Weighted_Out_Degree_fall16SimplifiedSmall.png}
        \caption{\textnormal{Forum post contributions by top 10\% of
-           contributors throughout an academic quarter (machine Learning class).}}
+           contributors throughout an academic quarter (machine learning class).}}
        \label{fig:cs229OutDeg}
 \end{figure}
 \begin{figure}[htp]
        \centering
        \includegraphics{Figs/comparison_Pagerank_fall16CS229Tiny.png}
        \caption{\textnormal{Page rank by top 10\% of
-           contributors throughout an academic quarter (machine Learning class).}}
+           contributors throughout an academic quarter (machine learning class).}}
        \label{fig:cs229PageRank}
 \end{figure}
 Notice in Figure~\ref{fig:cs229OutDeg} that the successive increases
-in average contribution of the top 10\% appears piecewise
-linear. This behavior could be significant, because sudden
-accelerations in forum contributions could indicate that other
-students might do well to also accelerate their posting. This
-consideration would be particularly strong if the same pattern was
-observable across several offerings of a course.
+in average contribution of the top 10\% appears piecewise linear. If
+reproduced across multiple course offerings, this behavior could be
+significant, because sudden accelerations in forum contributions could
+indicate that other students might do well to also accelerate their
+posting at that point. That is, the discontinuities could be good
+intervention points.
 
-However, further analysis is required to tell whether these changes
-are significant. We therefore constructed both control charts and
-bootstrap analysis to the measured points. Control charts are of
-significance for our scenario, because breakages across control bounds
-can be observed at any point in time. Instructors could therefore be
-alerted weekly of any students (or average of larger student groups)
-who are atypical in their posting behavior. Bootstrap procedures,
-which permute data points many times, computing target measures like
-means each time require that all data points are available for the
-procedure. On the other hand, these procedures can detect multiple
-change points that occur in the examined data.
+However, further analysis is required to tell whether these {\em
+  change points} are significant. We therefore next constructed a
+bootstrapped CUSUM analysis to the total number of forum posts of a
+course offering, measured every week \cite{tayl16}.  For each series
+of course offerings this analysis yielded the degree of consistency of
+significant forum post activity changes throughout the offerings.
 
-We searched for change points via 1000 permutation iterations, and
-show change points at the 99\% confidence
-level. Figure~\ref{fig:cs229ChangePts} shows the change points in out
-degree for the same course offering that is shown in
-Figure~\ref{fig:cs229OutDeg}.
+Our bootstrap permuted the post readings, and re-computed the CUSUM
+points 1000 times. For each permutation we computed the $S_{diff}^0 =
+S_{max}^0-S_{min}^0$ and determined whether $S_{diff}^0$ was less than
+the corresponding value $S_{diff}$ in the CUSUMs of the correctly
+ordered number of posts. We accepted that a change point occurred
+sometime in a quarter at a confidence level of 99\%. That is, we
+accepted that a change point occurred if at least 990 of the
+permutations yielded an $S_{diff}^0$ less than $S_{diff}$.
+
+Following \cite{tayl16} we determined the last week before a change
+for each change point. Figure~\ref{fig:cs229ChangePts} shows an
+example.
 \begin{figure}[htp]
        \centering
-       \includegraphics{Figs/changepoint_outdegfall16CS229Tiny.png}
-       \caption{\textnormal{Change points of machine learning course
-           forum postings..}}
+       \includegraphics{Figs/changepoint_outdegCs229Fall14Small.png}
+       \caption{\textnormal{Change points in forum posting
+           accumulation time series of machine learning course.}}
        \label{fig:cs229ChangePts}
 \end{figure}
+
 
 
 
@@ -348,14 +353,14 @@ Figure~\ref{fig:cs229OutDeg}.
        \centering
        \includegraphics[width=1\textwidth]{Figs/pagerank_sm_color.png}
        \caption{\textnormal{Comparison of Pageranks for top 10\% students}}
-       \label{fig:womenHealth}
+       \label{fig:pageRankCompare}
 \end{figure}
 
 \begin{figure}[htp]
        \centering
        \includegraphics[width=1\textwidth]{Figs/weighted_out_degree_sm_color.png}
        \caption{\textnormal{Comparison of Weighted Out Degrees for top 10\% students}}
-       \label{fig:womenHealth}
+       \label{fig:outDegCompare}
 \end{figure}
 
 \begin{figure}[htp]
@@ -385,4 +390,13 @@ Here is an example chart of the correct size.
 \item Draw instructor attention to dense topic clusters, which might
   indicate confusion, or student excitement to harness.
 \end{itemize}
-<
+%% Control charts are of significance for our scenario, because
+%% breakages across control bounds can be observed at any point in
+%% time. Instructors could therefore be alerted weekly of any students
+%% (or average of larger student groups) who are atypical in their
+%% posting behavior. Bootstrap procedures, which permute data points many
+%% times, computing target measures like means each time require that all
+%% data points are available for the procedure. On the other hand, these
+%% procedures can detect multiple change points that occur in the
+%% examined data.
+
