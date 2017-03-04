@@ -65,6 +65,42 @@
 
 \section{Introduction}
 
+Many massively open online course (MOOCs) rely heavily on online forum
+facilities. The remote course participants are expected to communicate
+by posting questions and opinions on the learning management system's
+forum. Instructors and teaching assistants sometimes selectively
+respond via that medium. Importantly, the courses rely on the students
+themselves to answer each others' questions in comments to
+posts. Whereas in science courses the forum often serves primarily the
+exchange of questions and answers, humanities courses frequently
+require discussions among students. The forum plays an even more
+central part in these scenarios.
+
+Given their importance in MOOCs, a number of studies have examined
+student behaviors on forum facilities. For example, forum
+participation has been studies as an early indicator of student
+dropout \cite{yang2013}. The distribution of forum post submissions
+among course participants was examined in \cite{Huang2014}. This
+examination showed the frequent posters, or {\em superposters} do
+better in courses than the average of other participants. The authors
+further find that the presence of superposters has positive impact on
+the rest of the forum participants.
+
+Maybe related to the by necessity heavy reliance on forum
+communication in MOOCs, forum facilities have also steadily gained
+acceptance in residential, classroom bound courses. The forum there is
+a supplement to in-class discussion---if such face-to-face
+interactions even occur. Studies on how academic outcomes are related
+to forum participation in residential settings are missing because
+access to grades in these settings tends to be highly restricted.
+
+However, we can at least hypothesize that benefits such as those found
+by \cite{Huang2014} do carry over to residential students. If we
+accept for the moment that forum participation is indeed beneficial,
+then we can ask how to encourage students to participate with posts
+and comments on others' contributions.
+
+
 \section{Dataset}
 
 Since 2011 many courses in the university have used the Piazza forum
@@ -217,47 +253,45 @@ measures. This average was computed for each week of each
 offering. The results provided a week-by-week time series of postings
 and evolving pagerank for these students.
 
-Figures~\ref{fig:cs229OutDeg} and \ref{fig:cs229PageRank} shows a
-typical time series with weighted out degree on the ordinal, and weeks
-on the abscissa. The line at the bottom shows the median weighted out
-degree across time for this Fall 2016 offering of a machine learning
-class.
+Figure~\ref{fig:cs229OutDeg} shows a typical time series with the sum
+of postings (i.e. weighted out degree) on the ordinal, and weeks into
+the quarter on the abscissa.
+%% \begin{figure}[htp]
+%%        \centering
+%%        \includegraphics{Figs/comparison_Weighted_Out_Degree_fall16SimplifiedSmall.png}
+%%        \caption{\textnormal{Forum post contributions by top 10\% of
+%%            contributors throughout an academic quarter (machine learning class).}}
+%%        \label{fig:cs229OutDeg}
+%% \end{figure}
 \begin{figure}[htp]
        \centering
-       \includegraphics{Figs/comparison_Weighted_Out_Degree_fall16SimplifiedSmall.png}
-       \caption{\textnormal{Forum post contributions by top 10\% of
+       \includegraphics{Figs/CS229Fall14RawDataSmall.png}
+       \caption{\textnormal{Page rank by top 10\% of
            contributors throughout an academic quarter (machine learning class).}}
        \label{fig:cs229OutDeg}
 \end{figure}
-\begin{figure}[htp]
-       \centering
-       \includegraphics{Figs/comparison_Pagerank_fall16CS229Tiny.png}
-       \caption{\textnormal{Page rank by top 10\% of
-           contributors throughout an academic quarter (machine learning class).}}
-       \label{fig:cs229PageRank}
-\end{figure}
 Notice in Figure~\ref{fig:cs229OutDeg} that the successive increases
-in average contribution of the top 10\% appears piecewise linear. If
-reproduced across multiple course offerings, this behavior could be
-significant, because sudden accelerations in forum contributions could
-indicate that other students might do well to also accelerate their
-posting at that point. That is, the discontinuities could be good
-intervention points.
+in average contribution of the top 10\% appear to take a jump after
+week 5. Such a discontinuity, or {\em change point} could be a good
+trigger for encouragements of students who have held back
+participation. However, visual inspection is insufficient for
+determining whether this change is statistically significant, or could
+easily be explained by random noise instead. The question mark in the
+figure is a reminder of this uncertainty.
 
-However, further analysis is required to tell whether these {\em
-  change points} are significant. We therefore next constructed a
-bootstrapped CUSUM analysis to the total number of forum posts of a
-course offering, measured every week \cite{tayl16}.  For each series
-of course offerings this analysis yielded the degree of consistency of
-significant forum post activity changes throughout the offerings.
+We therefore next constructed a bootstrapped CUSUM analysis over the
+total number of forum posts of a course offering, measured every week
+\cite{tayl16}.  For each series of course offerings this analysis
+yielded the degree of consistency of significant forum post activity
+changes throughout the offerings.
 
 Our bootstrap permuted the post readings, and re-computed the CUSUM
 points 1000 times. For each permutation we computed the $S_{diff}^0 =
 S_{max}^0-S_{min}^0$ and determined whether $S_{diff}^0$ was less than
 the corresponding value $S_{diff}$ in the CUSUMs of the correctly
 ordered number of posts. We accepted that a change point occurred
-sometime in a quarter at a confidence level of 99\%. That is, we
-accepted that a change point occurred if at least 990 of the
+sometime in a quarter at a confidence level of 95\%. That is, we
+accepted that a change point occurred if at least 950 of the
 permutations yielded an $S_{diff}^0$ less than $S_{diff}$.
 
 Following \cite{tayl16} we determined the last week before a change
@@ -265,12 +299,23 @@ for each change point. Figure~\ref{fig:cs229ChangePts} shows an
 example.
 \begin{figure}[htp]
        \centering
-       \includegraphics{Figs/changepoint_outdegCs229Fall14Small.png}
-       \caption{\textnormal{Change points in forum posting
-           accumulation time series of machine learning course.}}
+       \includegraphics{Figs/cs229Fall14ChangeAnalysis.png}
+       \caption{\textnormal{Change points in forum posting 
+           time series of a machine learning course.}}
        \label{fig:cs229ChangePts}
 \end{figure}
-
+The top chart's line shows changes in the average posts contributions
+by the top-10\% contributors during the previous week. The bottom
+chart's line shows for each week the accumulated differences from the
+mean of the weekly contribution changes. For example, up to about week
+five, weekly postings by the top-10\% was below the average of 5. The
+corresponding downward segment of the CUSUM reflects increasingly
+negative sums of those differences. During week 5 weekly contributions
+begin to rise above the mean, and the CUSUM `recovers' upward towards
+zero. The left and right blue background bands of
+Figure~\ref{fig:cs229ChangePts} (top) are offset between weeks five
+and six. The left band covers the ******
+[****Explain both the red lines (UCL/LCL) and blue bands.]
 
 
 
