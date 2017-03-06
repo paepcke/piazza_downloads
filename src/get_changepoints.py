@@ -10,7 +10,8 @@ import numpy as np
 from change_point_detection import ChangePointModel
 
 
-stats_file = '%s/EclipseWorkspaces/piazza_downloads/stats/cs229/fall16/top_statistics_student.csv' % os.getenv('HOME')
+#stats_file = '%s/EclipseWorkspaces/piazza_downloads/stats/cs229/fall16/top_statistics_student.csv' % os.getenv('HOME')
+stats_file = '%s/EclipseWorkspaces/piazza_downloads/stats/cs229/fall15/top_statistics_student.csv' % os.getenv('HOME')
 #stats_file = '%s/EclipseWorkspaces/piazza_downloads/stats/cs231a/winter14/top_statistics_student.csv' % os.getenv('HOME')
 
 if __name__ == '__main__':

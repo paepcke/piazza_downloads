@@ -120,9 +120,11 @@ Since 2011 many courses in the university have used the Piazza forum
 facility for its internal courses. Our dataset comprises the posts and
 comments of these usage years. From among 5000 university course
 offerings that have used the Piazza forum facility since 2011 we
-selected nine courses, with a total of around 40 offerings. Most
-courses were taught multiple times since 2011, so we include
-longitudinal forum usage data for most courses.
+selected nine courses, with a total of around 40 offerings. We use the
+term {\em offering} to denote a course taught during a particular
+quarter. We call the set of all a course's offerings a {\em course}.
+Most courses had multiple offerings since 2011, so we were able to
+include longitudinal forum usage data for most courses.
 
 We used two criteria for selecting the courses to analyze. We favored
 those that had comparatively large numbers of student posts, and we
@@ -262,12 +264,11 @@ enough signals.
 
 \section{Analysis Procedure}
 
-For each course we identified the top 10\% of forum-contributing
-students as measured by their postings across the entire course. For
-those students we computed the average of our chosen social graph
-measures. This average was computed for each week of each
-offering. The results provided a week-by-week time series of postings
-and evolving pagerank for these students.
+For each course we identified the top 10\% students who contributed
+the most to the forum. For those students we computed the average of
+our chosen social graph measures. This average was computed for each
+week of each offering. The results provided a week-by-week time series
+of postings and evolving pagerank for these students.
 
 Figure~\ref{fig:cs229OutDeg} shows a typical time series with the sum
 of postings (i.e. weighted out degree) on the ordinal, and weeks into
@@ -282,7 +283,7 @@ the quarter on the abscissa.
 \begin{figure}[htp]
        \centering
        \includegraphics{Figs/CS229Fall15DataContributionsNoFrills.pdf}
-       \caption{\textnormal{Number of postings by the top 10\% of
+       \caption{\textnormal{Cumulative umber of postings by the top 10\% of
            contributors throughout an academic quarter (machine
            learning class).}}
        \label{fig:cs229OutDeg}
@@ -291,38 +292,63 @@ Notice in Figure~\ref{fig:cs229OutDeg} that the successive increases
 in average contribution of the top 10\% appear to take a jump after
 week 5. Such a discontinuity, or {\em change point} could be a good
 trigger for encouragements of students who have held back
-participation. However, visual inspection is insufficient for
-determining whether this change is statistically significant, or could
-easily be explained by random noise instead. The question mark in the
-figure is a reminder of this uncertainty.
+participation. For example, the jump could be due to important
+discussions just before the midterm.
 
-We therefore next constructed a bootstrapped CUSUM analysis over the
-total number of forum posts of a course offering, measured every week
-\cite{tayl16}.  For each series of course offerings this analysis
-yielded the degree of consistency of significant forum post activity
-changes throughout the offerings.
+However, visual inspection is insufficient for determining whether
+this change is statistically significant, or could instead be
+explained by random noise. The question mark in the figure is a
+reminder of this uncertainty.
 
-Our bootstrap permuted the post readings, and re-computed the CUSUM
-points 1000 times. For each permutation we computed the $S_{diff}^0 =
-S_{max}^0-S_{min}^0$ and determined whether $S_{diff}^0$ was less than
-the corresponding value $S_{diff}$ in the CUSUMs of the correctly
-ordered number of posts. We accepted that a change point occurred
-sometime in a quarter at a confidence level of 95\%. That is, we
-accepted that a change point occurred if at least 950 of the
-permutations yielded an $S_{diff}^0$ less than $S_{diff}$.
+We therefore next performed an analysis aimed at quantifying how much
+a given increase or decrease in weekly posts differed from the mean of
+those variations. For each series of course offerings this analysis
+yielded insight into how consistent the location of change points was
+across multiple offerings of the same course. Such consistency across
+offerings would imply that an instructor could `hard code' the week(s)
+in which encouragements would be sent.
 
-%CS229Fall15DataPlusCusum.pdf
+From an offering's weekly count of total posts to date by the top 10\%
+contributors we constructed the incremental increase of posts for each
+week. For example, Figure~\ref{fig:cs229ChangePts}'s top line shows
+the incremental contributions for each week of the same machine
+learning offering shown in Figure~\ref{fig:cs229OutDeg}
 
-Following \cite{tayl16} we determined the last week before a change
-for each change point. Figure~\ref{fig:cs229ChangePts} shows an
-example.
+In order to discover for each week whether its number of contributions
+differed significantly from those of other weeks we performed a
+bootstrap procedure across the post-contribution increments, i.e. over
+the data points of the top line in Figure~\ref{fig:cs229ChangePts}
+\cite{tayl16}
 \begin{figure}[htp]
        \centering
-       \includegraphics{Figs/cs229Fall14ChangeAnalysis.png}
+       \includegraphics{Figs/cs229Fall15_changePointFinalStyledPlusRawData.pdf}
        \caption{\textnormal{Change points in forum posting 
            time series of a machine learning course.}}
        \label{fig:cs229ChangePts}
 \end{figure}
+This process takes as reference the {\em CUSUM} over the incremental
+post counts \cite{nist2012}. This quantity is computed for each week
+as the sum of differences from the overall mean of incremental posts.
+\begin{equation}
+S_m = \sum_{i=0}^{m}(x_i-\hat{\mu}_0)
+\end{equation}
+where $x_i$ is the $i$'th weekly post increment, and $\hat{\mu}_0$ is
+the mean across all the weekly post increments.
+
+Our bootstrap permuted the post increments, and re-computed the CUSUM
+points 1000 times. For each permutation we computed the $S_{diff}^0 =
+S_{max}^0-S_{min}^0$ of the resulting CUSUM, and determined whether
+$S_{diff}^0$ was less than the corresponding value $S_{diff}$ in the
+CUSUM of the correctly ordered number of posts. We accepted that a
+change point occurred sometime in a quarter at a confidence level of
+95\%. That is, we accepted that a change point occurred if at least
+950 of the permutations yielded an $S_{diff}^0$ less than $S_{diff}$.
+
+
+
+Following \cite{tayl16} we determined the last week before a change
+for each change point. Figure~\ref{fig:cs229ChangePts} shows an
+example.
 The top chart's line shows changes in the average posts contributions
 by the top-10\% contributors during the previous week. The bottom
 chart's line shows for each week the accumulated differences from the

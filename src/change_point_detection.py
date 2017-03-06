@@ -43,27 +43,31 @@ class ChangePointModel(object):
         # S0_min = np.amin(bootstrap_cusum, axis=1)
         # S0_diff = np.subtract(S0_max,S0_min)
         #print 'S0_diff',S0_diff
-
         original_cusum = self.compute_cusum_ts(ts)
-        #print 'ORIGINAL :',original_cusum
         S_max = np.amax(original_cusum)
         S_min = np.amin(original_cusum)
         S_diff = np.subtract(S_max,S_min)
+
+        #print 'ORIGINAL :',original_cusum
         #print 'S_diff',S_diff
         found_critical_point=False
         num_small_bootstrap_diff = 0
+        saved_S0_diffs = []
         for cusum in bootstrap_cusum:
             S0_max = np.amax(cusum, axis=0)
-            S0_min = np.amax(cusum, axis=0)
+            S0_min = np.amin(cusum, axis=0)
             S0_diff = S0_max - S0_min
+            saved_S0_diffs.append(S0_diff)
             if S0_diff < S_diff:
-               num_small_bootstrap_diff += 1
-        if 100*num_small_bootstrap_diff/float(1000) >= 95: 
+              num_small_bootstrap_diff += 1
+        #****if 100*num_small_bootstrap_diff/float(1000) >= 95: 
+        if 100*num_small_bootstrap_diff/float(B) >= 90: 
             found_critical_point=True
 
-        if plot:
+        if plot and found_critical_point:
             plt.clf()
-            best_bootstraps = [bootstrap_cusum[i] for i in S0_diff.argsort()[-5:][::-1]]
+            #best_bootstraps = [bootstrap_cusum[i] for i in S0_diff.argsort()[-5:][::-1]]
+            best_bootstraps = [bootstrap_cusum[i] for i in np.array(saved_S0_diffs).argsort()[-5:][::-1]]
             i=1
             colors = ['r','y','m','k','c']
             for b in best_bootstraps:
@@ -115,10 +119,12 @@ class ChangePointModel(object):
         print ts
         return ts.index(max_cusum_abs_value)
 
-    def run(self, ts, name=None, B=1000, plot=False):
+    #*****def run(self, ts, name=None, B=1000, plot=False):
+    def run(self, ts, name=None, B=10000, plot=False):
         N = len(ts)
 
         if len(ts)>1:
+            
             S0_diff,S_diff,best_m,found_critical_point = self.bootstrap(ts,name=name, B=B, plot=plot)
             #conf  = self.confidence(S0_diff,S_diff)
             if found_critical_point: 
@@ -190,7 +196,11 @@ if __name__ == "__main__":
         ts0 = ts
     diffs = np.diff(ts0).tolist()
     model = ChangePointModel()
-    model.run(diffs)
+    #model.run(diffs)
+    
+    name = '/tmp/cs229Fall15.png'
+    print('File will be in: ../figures/'+name.split('/')[0]+'/Cusum_'+name.split('/')[1]+'.png')
+    model.run(diffs, name=name,  plot=True)
     #model.run(ts,name='cs221fallsomething',plot=True)
     model.plot(diffs,'../figures/cs229/'+'changepoint_'+'outdegfall15.png','Weighted Out Degree')
     print sorted(model.indices)
