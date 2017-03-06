@@ -1,0 +1,7 @@
+Questions for Aashna:
+
+- Clusters in figures/CS229/clustersInCS229Fall11.png
+    o "...the colors represent modularity classes for the nodes."
+       What are modularity classes?
+    o What are the gray outliers beyond the outer gray circle?
+
