@@ -17,7 +17,7 @@ class smallMultiples:
       self.cols = cols
       plt.figure(1)
       font = {'weight' : 'medium',
-              'size'   : 4}
+              'size'   : 3}
       plt.rc('font', **font)
       plt.subplots_adjust(hspace=0.6)
 
@@ -86,7 +86,7 @@ class smallMultiples:
 
               plt.xticks([])
               plt.yticks([])
-              plt.title(course+' '+names[i])
+              plt.title(course+' '+names[i],fontsize=6)
               ax = plt.gca()
               ax.set_axis_bgcolor((1,normalized_y[i], 0))
               plt.plot(x, y, linewidth=1.5,color='blue')#tableau20[(n-1)%len(tableau20)])
@@ -97,5 +97,5 @@ class smallMultiples:
 
 if __name__ == "__main__":
   sm  = smallMultiples(12,7)
-  sm.plot('Pagerank')
-  #sm.plot('Weighted Out Degree')
+  #sm.plot('Pagerank')
+  sm.plot('Weighted Out Degree')
