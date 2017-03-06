@@ -52,6 +52,9 @@ class ChangePointModel(object):
         #print 'S_diff',S_diff
         found_critical_point=False
         num_small_bootstrap_diff = 0
+        # Collect the bootstrap-cusum diffs
+        # into an array so they can be plotted
+        # if caller requested:
         saved_S0_diffs = []
         for cusum in bootstrap_cusum:
             S0_max = np.amax(cusum, axis=0)
@@ -64,7 +67,7 @@ class ChangePointModel(object):
         if 100*num_small_bootstrap_diff/float(B) >= 90: 
             found_critical_point=True
 
-        if plot and found_critical_point:
+        if plot:
             plt.clf()
             #best_bootstraps = [bootstrap_cusum[i] for i in S0_diff.argsort()[-5:][::-1]]
             best_bootstraps = [bootstrap_cusum[i] for i in np.array(saved_S0_diffs).argsort()[-5:][::-1]]
@@ -119,8 +122,7 @@ class ChangePointModel(object):
         print ts
         return ts.index(max_cusum_abs_value)
 
-    #*****def run(self, ts, name=None, B=1000, plot=False):
-    def run(self, ts, name=None, B=10000, plot=False):
+    def run(self, ts, name=None, B=1000, plot=False):
         N = len(ts)
 
         if len(ts)>1:
@@ -188,6 +190,7 @@ if __name__ == "__main__":
           0.007966075694506278, 0.0033839897207213697]
     '''
     file = '../stats/cs229/fall15/top_statistics_student.csv'
+    #file = '../stats/cultural_heritage/fall16/top_statistics_student.csv'
     reader = csv.DictReader(open(file,'r'))
     ts = [float(row['Weighted Out Degree']) for row in reader]
     if ts[0] != 0:
@@ -198,9 +201,12 @@ if __name__ == "__main__":
     model = ChangePointModel()
     #model.run(diffs)
     
+    # Make up a name that the plot routine will be able to
+    # parse into a plot destination chart when setting
+    # plot=True in the call to run()
     name = '/tmp/cs229Fall15.png'
     print('File will be in: ../figures/'+name.split('/')[0]+'/Cusum_'+name.split('/')[1]+'.png')
-    model.run(diffs, name=name,  plot=True)
-    #model.run(ts,name='cs221fallsomething',plot=True)
+    
+    model.run(diffs, name=name,  plot=False)
     model.plot(diffs,'../figures/cs229/'+'changepoint_'+'outdegfall15.png','Weighted Out Degree')
     print sorted(model.indices)
