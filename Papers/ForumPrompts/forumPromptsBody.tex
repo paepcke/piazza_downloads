@@ -77,29 +77,42 @@ require discussions among students. The forum plays an even more
 central part in these scenarios.
 
 Given their importance in MOOCs, a number of studies have examined
-student behaviors on forum facilities. For example, forum
-participation has been studies as an early indicator of student
+student behaviors on MOOC forum facilities. For example, forum
+participation has been studied as an early indicator of student
 dropout \cite{yang2013}. The distribution of forum post submissions
 among course participants was examined in \cite{Huang2014}. This
-examination showed the frequent posters, or {\em superposters} do
-better in courses than the average of other participants. The authors
-further find that the presence of superposters has positive impact on
-the rest of the forum participants.
+examination showed that frequent posters, or {\em superposters} do
+better in courses than the average among other participants. The
+authors further find that the presence of superposters has positive
+impact on the rest of the forum participants.
 
-Maybe related to the by necessity heavy reliance on forum
-communication in MOOCs, forum facilities have also steadily gained
-acceptance in residential, classroom bound courses. The forum there is
-a supplement to in-class discussion---if such face-to-face
-interactions even occur. Studies on how academic outcomes are related
-to forum participation in residential settings are missing because
-access to grades in these settings tends to be highly restricted.
+But forum facilities have also steadily gained acceptance in
+residential, classroom bound courses. The forum there is a supplement
+to in-class discussion---if such face-to-face interactions even occur
+in the lecture hall. Studies on how academic outcomes are related to
+forum participation in residential settings are missing because access
+to grades in these settings tends to be highly restricted. This work
+suffers from this limitation as well.
 
 However, we can at least hypothesize that benefits such as those found
 by \cite{Huang2014} do carry over to residential students. If we
 accept for the moment that forum participation is indeed beneficial,
-then we can ask how to encourage students to participate with posts
-and comments on others' contributions.
+then we need to ask how, and when instructors can encourage students
+to participate with posts and comments on others' contributions.
 
+In a MOOC setting, \cite{kizilcec2014encouraging} showed that
+variously framed emails encouraging the use of the forum yielded mixed
+results. But residential students operate under very different
+incentive structures. Most desire a successful completion of each
+course. Even large residential classes are much smaller than MOOCs,
+and students often know at least some of their peers from face-to-face
+meeting.
+
+We analyzed a number of Piazza forum posting behaviors in a large
+residential college. Our goal with this preliminary work was to find
+promising points during a quarter for {\bf when} to send encouraging
+emails to students who are overly passive on the forum. We also
+propose a data-informed method for {\bf personalizing} such messages.
 
 \section{Dataset}
 
@@ -107,11 +120,9 @@ Since 2011 many courses in the university have used the Piazza forum
 facility for its internal courses. Our dataset comprises the posts and
 comments of these usage years. From among 5000 university course
 offerings that have used the Piazza forum facility since 2011 we
-selected **** courses, with a total of **** offerings. Most courses
-were taught multiple times since 2011, so we include longitudinal
-forum usage data for most courses. One course was taught as a MOOC,
-and used Piazza; we included that data for comparison. Most MOOCs make
-use of the delivery platform's built-in forum facility.
+selected nine courses, with a total of around 40 offerings. Most
+courses were taught multiple times since 2011, so we include
+longitudinal forum usage data for most courses.
 
 We used two criteria for selecting the courses to analyze. We favored
 those that had comparatively large numbers of student posts, and we
@@ -123,7 +134,8 @@ particular sought to include Humanities courses that made use of
  \begin{figure}[htp]
        \centering
        \includegraphics[width=1.2\textwidth]{Figs/nodes2.pdf}
-       \caption{\textnormal{Number of users, active users and their degrees}}
+       \caption{\textnormal{Number of students in course, number of
+           students active in the forum, and number postings.}}
        \label{fig:graphExpl}
 \end{figure}
  
@@ -164,29 +176,33 @@ particular sought to include Humanities courses that made use of
 % \end{table}
 
 From the forum posts of these data we constructed one social graph for
-each course offering.
+each course offering. We then analyzed changes in two social graph
+measures over time to find `important' weeks.
 
 \section{From Posts to Connection Graph}
 
 Social networks are most simply modeled by considering each
 participant as a node, and interactions initiated by participants as
-out-directed links. In this case all nodes are of one type, and links
-are unidirectional. Multiple interaction initiations by one person are
+out-directed links. In our case each node represents a student,
+i.e. we only define one type of node. Links in our forum interaction
+graph represent one student posting, or commenting on another
+student's contribution. That is, our links are
+unidirectional. Multiple interaction initiations by one student are
 captured by weighting the corresponding outgoing links. Many graph
-analysis tools operate on models of this type, and this is the
-approach we chose.
+analysis tools operate on models of this type.
 
-However, other strategies exist to cover different goals. For example,
-\cite{Anwar2013} additionally consider linkages between forum post
-topics to include communication content in the model. When networks
-operate on particular platforms, such as underground forums, which
-include private `buddy' connections, such facilities may need to be
-modeled \cite{Moto2011}.
+Other strategies for viewing forum traffic as a graph exist to cover
+different goals. For example, \cite{Anwar2013} additionally consider
+posts themselves as one type of node. Linkages between the post nodes
+represent topics connections. Similarly, when user communication
+facilities operate on particular platforms, such as underground
+forums, which include private `buddy' connections, then such
+facilities may need to be modeled as well \cite{Moto2011}.
 
 For the purpose of identifying candidate time points for encouraging
-online conversation participation our chosen model suffices. We are
-not in this work considering additional measures, such as content
-quality, for which a richer model would be required.
+online conversation participation our chosen model suffices. Note that
+we are not in this work considering additional measures, such as
+content quality, for which a richer model would be required.
 
 Many measures are used to quantify various aspects of social graphs
 \cite{hann2005, lesk14}. Not all are meaningful in the context of
@@ -237,12 +253,12 @@ Some of the fifteen other measures we computed, such as {\em
   betweenness} are meaningful for forum scenarios as well, but their
 usefulness depends on one's analysis goals. For example,
 \cite{yang2013} include several of those measures for the purpose of
-prediction analysis. For evaluation contribution quality the contents
-of posts would need to be considered: students who persistently post
-irrelevant contents contribute less positively to the forum than
-constructively participating students. However, for our purposes the
-two measures of page rank and out-degree provide strong enough
-signals.
+persistence prediction. For evaluating contribution {\em quality} the
+contents of posts would need to be considered: students who
+persistently post irrelevant contents contribute less positively to
+the forum than constructively participating students. However, for our
+purposes the two measures of page rank and out-degree provide strong
+enough signals.
 
 \section{Analysis Procedure}
 
@@ -265,9 +281,10 @@ the quarter on the abscissa.
 %% \end{figure}
 \begin{figure}[htp]
        \centering
-       \includegraphics{Figs/CS229Fall14RawDataSmall.png}
-       \caption{\textnormal{Page rank by top 10\% of
-           contributors throughout an academic quarter (machine learning class).}}
+       \includegraphics{Figs/CS229Fall15DataContributionsNoFrills.pdf}
+       \caption{\textnormal{Number of postings by the top 10\% of
+           contributors throughout an academic quarter (machine
+           learning class).}}
        \label{fig:cs229OutDeg}
 \end{figure}
 Notice in Figure~\ref{fig:cs229OutDeg} that the successive increases
@@ -294,6 +311,8 @@ sometime in a quarter at a confidence level of 95\%. That is, we
 accepted that a change point occurred if at least 950 of the
 permutations yielded an $S_{diff}^0$ less than $S_{diff}$.
 
+%CS229Fall15DataPlusCusum.pdf
+
 Following \cite{tayl16} we determined the last week before a change
 for each change point. Figure~\ref{fig:cs229ChangePts} shows an
 example.
@@ -312,12 +331,22 @@ five, weekly postings by the top-10\% was below the average of 5. The
 corresponding downward segment of the CUSUM reflects increasingly
 negative sums of those differences. During week 5 weekly contributions
 begin to rise above the mean, and the CUSUM `recovers' upward towards
-zero. The left and right blue background bands of
-Figure~\ref{fig:cs229ChangePts} (top) are offset between weeks five
-and six. The left band covers the ******
-[****Explain both the red lines (UCL/LCL) and blue bands.]
+zero.
 
+The horizontal (red) lines in the top chart indicate the upper and
+lower limits within which week-to-week differences in posts
+contributions would be expected to vary just by
+chance\footnote{Assuming normal distribution of contribution
+  difference values}. The lines are called {\em control limits}, and
+we will discuss their potential real-time use during a course's run
+time in the discussion section (Section~\ref{sec:discussion}).
 
+The highlighted points in Figure~\ref{fig:cs229ChangePts} (top)
+are offset between weeks five and six. The left band covers the ******
+
+\section{Results}
+\section{Discussion}
+\label{sec:discussion}
 
 
 %% Figure~\ref{fig:smOutDeg} shows a summary of these series for some of

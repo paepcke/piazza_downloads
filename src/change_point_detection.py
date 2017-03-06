@@ -102,17 +102,17 @@ class ChangePointModel(object):
             self.run(ts[:best_m+1],B)
             self.run(ts[best_m+1:],B)
 
-    def plot(self,ts, plot_name = None, parameter=None):
-        import matplotlib.pyplot as plt
+    def plot(self,ts, plot_name = '/tmp/CS229_Fall16.png', parameter='Weekly Values'):
+        #import matplotlib.pyplot as plt
         weeks = range(1,len(ts)+1)
-        indices = [ts.index(list(self.change_intervals)[j]) for j in range(len(self.change_intervals)) if ts.index(list(self.change_intervals)[j])!=weeks[len(weeks)-1]]
-
+        self.indices = [ts.index(list(self.change_intervals)[j]) for j in range(len(self.change_intervals)) if ts.index(list(self.change_intervals)[j])!=weeks[len(weeks)-1]]
+        
         plt.figure()
         plt.xlabel('Week')
         plt.ylabel(parameter)
         plt.title('Change point detection '+plot_name.split('/')[2] + plot_name.split('_')[-1].split('.png')[0])
 
-        for index in indices:
+        for index in self.indices:
             plt.axvspan(index, index+1, facecolor='#2ca02c', alpha=0.5)
         
         green_patch = mpatches.Patch(color='#2ca02c', label='>99% confidence change')
