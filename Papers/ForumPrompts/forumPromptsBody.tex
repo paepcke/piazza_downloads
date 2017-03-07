@@ -72,7 +72,7 @@ themselves to answer each others' questions in comments to
 posts. Whereas in science courses the forum often serves primarily the
 exchange of questions and answers, humanities courses frequently
 require discussions among students. The forum plays an even more
-central part in these scenarios.
+central part in those scenarios.
 
 Given their importance in MOOCs, a number of studies have examined
 student behaviors on MOOC forum facilities. For example, forum
@@ -104,7 +104,8 @@ results. But residential students operate under very different
 incentive structures. Most desire a successful completion of each
 course. Even large residential classes are much smaller than MOOCs,
 and students often know at least some of their peers from face-to-face
-meeting.
+meeting. We might therefore expect that reactions to encouragement
+might differ from those in MOOC contexts.
 
 We analyzed a number of Piazza forum posting behaviors in a large
 residential college. Our goal with this preliminary work was to find
@@ -199,11 +200,11 @@ Social networks are most simply modeled by considering each
 participant as a node, and interactions initiated by participants as
 out-directed links. In our case each node represents a student,
 i.e. we only define one type of node. Links in our forum interaction
-graph represent one student posting, or commenting on another
-student's contribution. That is, our links are
-unidirectional. Multiple interaction initiations by one student are
-captured by weighting the corresponding outgoing links. Many graph
-analysis tools operate on models of this type.
+graph represent one student posting, or comment on another student's
+contribution. That is, our links are unidirectional. Multiple
+interaction initiations by one student are captured by weighting the
+corresponding outgoing links. Many graph analysis tools operate on
+models of this type.
 
 Other strategies for viewing forum traffic as a graph exist to cover
 different goals. For example, \cite{Anwar2013} additionally consider
@@ -221,21 +222,19 @@ content quality, for which a richer model would be required.
 Many measures are used to quantify various aspects of social graphs
 \cite{hann2005, lesk14}. Not all are meaningful in the context of
 education-related forum interactions. We focus here on two measures:
-{\em out-degree}, and {\em page rank}. Figure~\ref{fig:forumGraph}
-illustrates.
-
-\begin{figure}[htp]
+{\em weighted out-degree}, and {\em page
+  rank}. Figure~\ref{fig:forumGraph} illustrates.
+\begin{figure}[]
        \centering
        \includegraphics[width=1.0\textwidth]{Figs/forumNetworkExample.pdf}
        \caption{\textnormal{Example social graph induced by forum posts.}}
        \label{fig:forumGraph}
 \end{figure}
-
 Nodes $A$, $B$, $C$, $D$, and $E$ represent students. The link from
 $A$ to $B$ is marked with the number $3$, because $A$ commented three
-times on one of more of $B$'s posts. The number of outgoing links is
-the node's {\em out-degree}. For example, the {\em out-degree} of $A$
-is $4$.
+times on one or more of $B$'s posts. The number of outgoing links is
+the node's {\em out-degree weight}. For example, the {\em out-degree
+  weight} of $A$ is $4$.
 
 The number of incoming links is called the node's {\em
   in-degree}. Node $C$'s in-degree is $1$. Node $E$ has no links
@@ -253,8 +252,8 @@ which student $S_1$ posts an interesting question, to which many
 students comment with their opinion, creating a long thread. The node
 representing $S_1$ would experience an increase of its page rank with
 every incoming comment. Node $B$ in Figure~\ref{fig:forumGraph} is an
-example for this situation. Its in-degree is $4$. If $B$ were to
-comment on one of $D$'s posts, then $D$'s page rank would increase
+example for this situation. Its in-degree weight is $4$. If $B$ were
+to comment on one of $D$'s posts, then $D$'s page rank would increase
 more than if the low-page-rank node $C$ commented on $D$.
 
 In terms of evaluating a student's participation in the forum, a high
@@ -262,7 +261,15 @@ page rank, and high out-degree are positive. Low values are less
 positive. We chose these two values because of their relatively
 straight-forward meanings when applied to forum posts, and for their
 relevance to our goal of identifying potential intervention times.
-
+%% Figure~\ref{fig:smMultsPageRank} shows a summary of how average page
+%% ranks for the top-10\% contributors changes.
+%% \begin{figure}[]
+%%        \centering
+%%        \includegraphics{Figs/smallMultiplesPageRank.pdf}
+%%        \caption{\textnormal{Summary of average page rank over top-10\%
+%%            of students across successive offerings.}}
+%%        \label{fig:smMultsPageRank}
+%% \end{figure}
 Some of the fifteen other measures we computed, such as {\em
   betweenness} are meaningful for forum scenarios as well, but their
 usefulness depends on one's analysis goals. For example,
@@ -272,7 +279,8 @@ contents of posts would need to be considered: students who
 persistently post irrelevant contents contribute less positively to
 the forum than constructively participating students. However, for our
 purposes the two measures of page rank and out-degree provide strong
-enough signals.
+enough signals. We in fact focus in the following on the out-degree
+to explore its contributions to insights into student behavior.
 
 \section{Analysis Procedure}
 
@@ -292,7 +300,7 @@ the quarter on the abscissa.
 %%            contributors throughout an academic quarter (machine learning class).}}
 %%        \label{fig:cs229OutDeg}
 %% \end{figure}
-\begin{figure}[htp]
+\begin{figure}[]
        \centering
        \includegraphics{Figs/CS229Fall15DataContributionsNoFrills.pdf}
        \caption{\textnormal{Cumulative umber of postings by the top 10\% of
@@ -331,7 +339,7 @@ differed significantly from those of other weeks we performed a
 bootstrap procedure across the post-contribution increments, i.e. over
 the data points of the top line in Figure~\ref{fig:cs229ChangePts}
 \cite{tayl16}
-\begin{figure}[htp]
+\begin{figure}[]
        \centering
        \includegraphics{Figs/cs229Fall15_changePointFinalStyledPlusRawData.pdf}
        \caption{\textnormal{Change points in forum posting 
@@ -351,8 +359,13 @@ Our bootstrap permuted the post increments, and re-computed the CUSUM
 points 1000 times. For each permutation we computed the $S_{diff}^0 =
 S_{max}^0-S_{min}^0$ of the resulting CUSUM, and determined whether
 $S_{diff}^0$ was less than the corresponding value $S_{diff}$ in the
-CUSUM of the correctly ordered number of posts. We compute a
-confidence $C$ that a change point occurred sometime in a quarter via:
+CUSUM of the correctly ordered number of posts. $S_{max}^0$ and
+$S_{min}^0$ are the maximim/minimum values of the CUSUM for a given
+iteration. Their difference represents the farthest that the
+iteration's CUSUM strays from the CUSUM's mean.
+
+We compute a confidence $C$ that a change point occurred sometime in a
+quarter via:
 \begin{equation}
   \begin{split}
     x_i = \left.
@@ -369,16 +382,17 @@ confidence $C$ that a change point occurred sometime in a quarter via:
   100*\frac{\sum_1^N x_i}{N}
   \right.
 \end{equation}
-where $x_i$ is the outcome of one bootstrap iteration, $N$ and is the
+where $x_i$ is the outcome of one bootstrap iteration, and $N$ is the
 number of bootstrap iterations. Figure~\ref{fig:multiBoots} shows an
 example of five iterations. Points on the unlabeled lines denote
 differences of CUSUM points from the mean during one week. Note the
-distance of those lines from the line that shows the CUSUM distance
-for the correctly sequenced values at the bottom.
-\begin{figure}[htp]
+that distance of those lines from the dotted mean line tends to be
+much smaller than the CUSUM distance for the correctly sequenced
+values at the bottom.
+\begin{figure}[]
        \centering
        \includegraphics{Figs/multiBootstrapCurvesUrbStud145Summer14.pdf}
-       \caption{\textnormal{CUSUMS from permuted weekly post
+       \caption{\textnormal{CUSUMs from permuted weekly post
            contribution rates hover around the mean.}}
        \label{fig:multiBoots}
 \end{figure}
@@ -425,13 +439,13 @@ during that week.
 \caption{Consistency across offerings in weeks with change points.}
 \label{tbl:consistency}
 \begin{tabular}{lcccccccc}
-Course                                                                      & \multicolumn{1}{l}{Week3} & \multicolumn{1}{l}{Week4} & \multicolumn{1}{l}{Week5} & \multicolumn{1}{l}{Week6} & \multicolumn{1}{l}{Week7} & \multicolumn{1}{l}{Week8} & \multicolumn{1}{l}{Week9} & \multicolumn{1}{l}{Week10} \\
-AI Principles                                                               & 17\%                      &                           &                           &                           & 50\%                      & 16\%                      & 33\%                      &                            \\
-Machine Learning                                                            & 50\%                      &                           & 14\%                      & 14\%                      & 14\%                      & 28\%                      &                           &                            \\
-Computer Vision                                                             &                           &                           &                           & 50\%                      &                           &                           &                           &                            \\
-Decision Analysis                                                           & 50\%                      & 50\%                      & 50\%                      &                           &                           & 50\%                      &                           &                            \\
-\begin{tabular}[c]{@{}l@{}}Algorithms for \\ Molecular Biology\end{tabular} &                           &                           &                           &                           & 33\%                      &                           &                           &                            \\
-\begin{tabular}[c]{@{}l@{}}International \\ Urbanization\end{tabular}       &                           &                           &                           & 20\%                      &                           &                           &                           &                           
+Course                                                                                           & \multicolumn{1}{l}{Week3} & \multicolumn{1}{l}{Week4} & \multicolumn{1}{l}{Week5} & \multicolumn{1}{l}{Week6} & \multicolumn{1}{l}{Week7} & \multicolumn{1}{l}{Week8} & \multicolumn{1}{l}{Week9} & \multicolumn{1}{l}{Week10} \\ \cline{2-9} 
+\multicolumn{1}{l|}{AI Principles}                                                               & \multicolumn{1}{c|}{17\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{16\%} & \multicolumn{1}{c|}{33\%} & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
+\multicolumn{1}{l|}{Machine Learning}                                                            & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{14\%} & \multicolumn{1}{c|}{14\%} & \multicolumn{1}{c|}{14\%} & \multicolumn{1}{c|}{28\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
+\multicolumn{1}{l|}{Computer Vision}                                                             & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
+\multicolumn{1}{l|}{Decision Analysis}                                                           & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
+\multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Algorithms for \\ Molecular Biology\end{tabular}} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{33\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
+\multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}International \\ Urbanization\end{tabular}}       & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{20\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
 \end{tabular}
 \end{table*}
 The results indicate that week six is particularly likely to
@@ -459,7 +473,7 @@ instructor do to discover unusual posting frequencies while the
 offering is running?
 
 \subsection{Control Charts for Forum Alerts}
-Figure~\ref{fig:cs229ChangePts} lower chart hints at a possibility we
+Figure~\ref{fig:cs229ChangePts}'s lower chart hints at a possibility we
 have not yet discussed. As mentioned, the horizontal dotted lines are
 {\em process limits}, a term from process control practice
 \cite{nist2012}. The limits bound the values within which a process is
@@ -469,8 +483,8 @@ such level is known from the domain, a mean can be used.
 
 In the context of instructional forum use it would be possible to
 detect points, such as the one above the upper control limit in
-Figure~\ref{fig:cs229ChangePts}. Such sudden change might indicate
-confusion among the students, or the discovery of an exciting
+Figure~\ref{fig:cs229ChangePts}. Such change to above-normal might
+indicate confusion among the students, or the discovery of an exciting
 topic. Either way, the instructor's attention might be warranted, as
 might be pointing passive students to the increased activity.
 
@@ -479,7 +493,7 @@ The data framework we discussed could also be deployed to provide
 personalized encouragement for passive students. Rather than
 admonishing students for past passivity, a forward-looking nudge could
 be provided. Figure~\ref{fig:nudgeAngles} illustrates this option.
-\begin{figure}[htp]
+\begin{figure}[]
        \centering
        \includegraphics{Figs/angleTrajectories.pdf}
        \caption{\textnormal{Personalized, quantitative nudges:
@@ -488,25 +502,25 @@ be provided. Figure~\ref{fig:nudgeAngles} illustrates this option.
        \label{fig:nudgeAngles}
 \end{figure}
 The dot represents one student and their contribution as of week six:
-two postings. The two options are shown in the Figure for catching up
-to the top-10 contributors. These, and other options are derived by
-drawing a line from the student's position to an intersection with the
-regression line. That line is known from past course offerings. The
-larger the slope of the connecting line, the more aggressive the plan
-for catching up. For example, the long line would catch the student up
-within five weeks, assuming a weekly rate of $(20-2)/5 \approx 4$ messages
-per week.
+two postings. Two of many possible options are shown in the Figure for
+catching up to the top-10\% contributors. These, and other options are
+derived by drawing a line from the student's position to an
+intersection with the regression line. That line is known from past
+course offerings. The larger the slope of the connecting line, the
+more aggressive the plan for catching up. For example, the long line
+would catch the student up within five weeks, assuming a weekly rate
+of $(20-2)/5 \approx 4$ messages per week.
 
 Alternatively, the shorter line would call for six messages per week,
 to catch up within two weeks. The square at the end of the long option
 is intended to represent a slider that the student could run along the
-regression line to make a plan. The number of required messages would
-be updated continuously as the student operates the slider. While this
-sketch may not be the ideal and ultimate user interface, it
-illustrates the ideas of using past and current forum data to provide
-({\em i}) forward-looking encouragement in place of recrimination, and
-({\em ii}) to empower the student by personalizing the message, and
-providing a tool for planning.
+regression line to make a plan. The number of required weekly messages
+would be updated continuously as the student operates the
+slider. While this sketch is certainly not the ideal, and ultimate
+user interface, it illustrates the ideas of using past and current
+forum data to provide ({\em i}) forward-looking encouragement in place
+of recrimination, and ({\em ii}) to empower the student by
+personalizing the message, and providing a tool for planning.
 
 \section{Related Work}
 Many educators expend enormous amounts of effort to designing their
@@ -529,15 +543,15 @@ Dawson et al. \cite{doi} added that the analysis of educational data
 might be used to improve the student learning experience, which would
 not only require a quantitative, but also a qualitative one, or at
 least a qualitative interpretation of findings. The interpretation
-would have to include a value judgment on people’s use of the
+would have to include a value judgment on people's use of the
 environment: not only counting who uses the environment for what, but
 also judging what might be a good and what might be a bad experience,
 and offering suggestions for moving on the continuum from one to the
 other.
 
-Positive learning behaviours can be encouraged through the use of
-persuasive technologies. Any knowledge about given learners’
-behaviours, complemented with those of their peers, plus that
+Positive learning behaviors can be encouraged through the use of
+persuasive technologies. Any knowledge about given learners'
+behaviors, complemented with those of their peers, plus that
 identified as the ideal, could be used as a nudge. Specially if
 triggered by contextual clues, positive ``nudges'' may help students
 achieve their learning goals \cite{wilde2016understanding}. Fogg
@@ -545,7 +559,7 @@ achieve their learning goals \cite{wilde2016understanding}. Fogg
 exactly this manner towards learning success.
 
 However the successful application of these technologies presupposes a
-very good understanding of the learners’ behaviour. Whilst such an
+very good understanding of the learners’ behavior. Whilst such an
 understanding can be sought through learning analytics, this is a
 challenging endeavour as the data required may be incomplete,
 inaccurate, and technically difficult to both collect and process in
@@ -562,7 +576,7 @@ rate in forum participation \cite{DBLP}, and student dropout rates
 \cite{Yang_peerinfluence} with the progression of courses in MOOC
 contexts. Anderson et al. \cite{DBLP:journals/corr/AndersonHKL14}
 examine the behavioral patterns of high- and low-achieving students
-and relate student’s final grade to their engagement in MOOCS.
+and relate student's final grade to their engagement in MOOCS.
 
 \section{Conclusion and Future Work}
 
@@ -582,13 +596,16 @@ for example, at the beginning of a course. Equally important is to
 extend our study to include measures of post quality. We focused on
 the top 10\% most prolific forum contributors. But the quality of
 those postings---by some measure---is important to include in
-evaluations of forum health.
+evaluations of forum health. For that exploration we will include both
+page content and the page ranks we computed for this work.  Our graph
+based approach has generated the necessary framework for this future
+investigation.
 
 Forum facilities offer potential for student interaction outside the
 classroom. One hopes that courses with a large component of discussion
 might benefit in the future. Meanwhile, it is important to develop
 methods that help all students take advantage of these online contact
-options. 
+options. This work is a step in that direction.
 
 %% Control charts are of significance for our scenario, because
 %% breakages across control bounds can be observed at any point in
