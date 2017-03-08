@@ -139,8 +139,9 @@ swatches), and courses.
        \centering
        %\includegraphics[width=1.2\textwidth]{Figs/nodes2.pdf}
        \includegraphics{Figs/classesInDatasetLegendAltered.pdf}
-       \caption{\textnormal{Number of students in course, number of
-           students active in the forum, and number postings.}}
+       \caption{\textnormal{Number of students enrolled in the course,
+           number of students active in the forum, and number
+           postings.}}
        \label{fig:simpleCrsStats}
 \end{figure}
  
@@ -217,14 +218,15 @@ facilities may need to be modeled as well \cite{Moto2011}.
 
 For the purpose of identifying candidate time points for encouraging
 online conversation participation our chosen model suffices. Note that
-we are not in this work considering additional measures, such as
-content quality, for which a richer model would be required.
+this work does not consider additional measures, such as content
+quality, for which a richer model would be required.
 
 Many measures are used to quantify various aspects of social graphs
 \cite{hann2005, lesk14}. Not all are meaningful in the context of
 education-related forum interactions. We focus here on two measures:
 {\em weighted out-degree}, and {\em page
-  rank}. Figure~\ref{fig:forumGraph} illustrates.
+  rank}. Figure~\ref{fig:forumGraph} illustrates our use of social
+graphs for forum activity.
 \begin{figure}[]
        \centering
        \includegraphics[width=1.0\textwidth]{Figs/forumNetworkExample.pdf}
@@ -280,8 +282,9 @@ contents of posts would need to be considered: students who
 persistently post irrelevant contents contribute less positively to
 the forum than constructively participating students. However, for our
 purposes the two measures of page rank and out-degree provide strong
-enough signals. We in fact focus in the following on the out-degree
-to explore its contributions to insights into student behavior.
+enough signals. We in fact focus in the following material on the
+weighted out-degree to explore its contributions to insights into
+student behavior.
 
 \section{Analysis Procedure}
 
@@ -304,7 +307,7 @@ the quarter on the abscissa.
 \begin{figure}[]
        \centering
        \includegraphics{Figs/CS229Fall15DataContributionsNoFrills.pdf}
-       \caption{\textnormal{Cumulative umber of postings by the top 10\% of
+       \caption{\textnormal{Cumulative number of postings by the top 10\% of
            contributors throughout an academic quarter (machine
            learning class).}}
        \label{fig:cs229OutDeg}
@@ -312,16 +315,16 @@ the quarter on the abscissa.
 Notice in Figure~\ref{fig:cs229OutDeg} that the successive increases
 in average contribution of the top 10\% appear to take a jump after
 week 5. Such a discontinuity, or {\em change point} could be a good
-trigger for encouragements of students who have held back
-participation. For example, the jump could be due to important
-discussions just before the midterm.
+trigger for encouraging students who have held back participation. For
+example, the jump could be due to important discussions just before
+the midterm.
 
 However, visual inspection is insufficient for determining whether
 this change is statistically significant, or could instead be
 explained by random noise. The question mark in the figure is a
 reminder of this uncertainty.
 
-We therefore next performed an analysis aimed at quantifying how much
+Therefore, we next performed an analysis aimed at quantifying how much
 a given increase or decrease in weekly posts differed from the mean of
 those variations. For each series of course offerings this analysis
 yielded insight into how consistent the location of change points was
@@ -330,13 +333,13 @@ offerings would imply that an instructor could `hard code' the week(s)
 in which encouragements would be sent.
 
 From an offering's weekly count of total posts to date by the top 10\%
-contributors we constructed the incremental increase of posts for each
+contributors, we constructed the incremental increase of posts for each
 week. For example, Figure~\ref{fig:cs229ChangePts}'s top line shows
 the incremental contributions for each week of the same machine
 learning offering shown in Figure~\ref{fig:cs229OutDeg}
 
 In order to discover for each week whether its number of contributions
-differed significantly from those of other weeks we performed a
+differed significantly from those of other weeks, we performed a
 bootstrap procedure across the post-contribution increments, i.e. over
 the data points of the top line in Figure~\ref{fig:cs229ChangePts}
 \cite{tayl16}
@@ -425,13 +428,13 @@ level 92\%.
 \section{Results and Discussion}
 \label{sec:discussion}
 
-Our question was ``when during a course might be good times to
-encourage students who lag behind in forum contributions?'' We
+Our question was ``when would be good times during a course for
+encouraging students who lag behind in forum contributions?'' We
 hypothesize that times when the top 10\% of contributors speed up,
 other students might be encouraged to do the same.
 
 Table~\ref{tbl:consistency} shows the weeks in which different courses
-tended to experience significant changes in behaviors of the top-10
+tended to experience significant changes in behaviors of the top-10\%
 contributors. The percentages in a week's column indicate the
 proportion of the respective course's offerings that experienced jumps
 during that week.
@@ -498,7 +501,7 @@ be provided. Figure~\ref{fig:nudgeAngles} illustrates this option.
        \centering
        \includegraphics{Figs/angleTrajectories.pdf}
        \caption{\textnormal{Personalized, quantitative nudges:
-           catching up with the top-10 within five weeks, or two
+           catching up with the top-10\% within five weeks, or two
            weeks.}}
        \label{fig:nudgeAngles}
 \end{figure}
@@ -524,7 +527,7 @@ of recrimination, and ({\em ii}) to empower the student by
 personalizing the message, and providing a tool for planning.
 
 \section{Related Work}
-Many educators expend enormous amounts of effort to designing their
+Many educators expend enormous amounts of effort to design their
 courses towards maximizing the value of student
 interactions. Regardless of the approach taken, a series of questions
 consistently arises: How effective is the course? Is it meeting the
@@ -560,7 +563,7 @@ achieve their learning goals \cite{wilde2016understanding}. Fogg
 exactly this manner towards learning success.
 
 However the successful application of these technologies presupposes a
-very good understanding of the learners’ behavior. Whilst such an
+very good understanding of the learners' behavior. Whilst such an
 understanding can be sought through learning analytics, this is a
 challenging endeavour as the data required may be incomplete,
 inaccurate, and technically difficult to both collect and process in
@@ -601,6 +604,13 @@ evaluations of forum health. For that exploration we will include both
 page content and the page ranks we computed for this work.  Our graph
 based approach has generated the necessary framework for this future
 investigation.
+
+A further use of page rank will be the ability to observe how teaching
+assistants interact with students around particular topics. TAs will
+tend to have high page rank, and by filtering page rank computations
+by the topics of student postings we can expect to see topic-based
+divisions of labor among the assistants. They can then more formally
+distribute their load.
 
 Forum facilities offer potential for student interaction outside the
 classroom. One hopes that courses with a large component of discussion
