@@ -114,6 +114,50 @@ encouraging emails to students who are overly passive on the forum. We
 also propose a data-informed method for {\bf personalizing} such
 messages.
 
+\section{Related Work}
+Many educators expend enormous amounts of effort to design their
+courses towards maximizing the value of student
+interactions. Regardless of the approach taken, a series of questions
+consistently arises: How effective is the course? Is it meeting the
+needs of the students? How can the needs of learners be better
+supported? What interactions are effective? How can they be further
+improved? Traditional approaches to answering these questions have
+involved student evaluation, the analysis of grades and attrition
+rates, and instructor perceptions most often gathered at the end of a
+course \cite{tayl16_1}.
+
+Norris et al. \cite{campbell2007academic} suggest that they would like
+analytics to be used to measure, compare and improve the performance
+of individuals, not just to better the experience but also to
+facilitate better outcomes to the activity.
+
+Dawson et al. \cite{doi} added that the analysis of educational data
+might be used to improve the student learning experience, which would
+not only require a quantitative, but also a qualitative one, or at
+least a qualitative interpretation of findings. The interpretation
+would have to include a value judgment on people's use of the
+environment: not only counting who uses the environment for what, but
+also judging what might be a good and what might be a bad experience,
+and offering suggestions for moving on the continuum from one to the
+other.
+
+Positive learning behaviors can be encouraged through the use of
+persuasive technologies. Any knowledge about given learners'
+behaviors, complemented with those of their peers, plus that
+identified as the ideal, could be used as a nudge. Specially if
+triggered by contextual clues, positive ``nudges'' may help students
+achieve their learning goals \cite{wilde2016understanding}. Fogg
+\cite{Fogg} anticipated that in the future students could be nudged in
+exactly this manner towards learning success.
+
+However the successful application of these technologies presupposes a
+very good understanding of the learners' behavior. Whilst such an
+understanding can be sought through learning analytics, this is a
+challenging endeavour as the data required may be incomplete,
+inaccurate, and technically difficult to both collect and process in
+real-time \cite{wilde2016understanding}. 
+
+
 \section{Dataset}
 
 Since 2011 many courses in the university have used the Piazza forum
@@ -241,8 +285,8 @@ the node's {\em out-degree weight}. For example, the {\em out-degree
 
 The number of incoming links is called the node's {\em
   in-degree}. Node $C$'s in-degree is $1$. Node $E$ has no links
-entering or exiting. The respective student has not participated in
-the forum.
+entering or exiting. The respective student either did not participate in
+the forum or never replied to others posts and never received replies on his posts.
 
 Analogous to Web pages, each node can be assigned a {\em page
   rank}. The intuition in this context is that student $S_1$'s
@@ -350,7 +394,7 @@ the data points of the top line in Figure~\ref{fig:cs229ChangePts}
            time series of a machine learning course.}}
        \label{fig:cs229ChangePts}
 \end{figure}
-This process takes as reference the {\em CUSUM} over the incremental
+This process takes as reference the {\em CUSUM} (cumulative sum) over the incremental
 post counts \cite{nist2012}. This quantity is computed for each week
 as the sum of differences from the overall mean of incremental posts.
 \begin{equation}
@@ -364,7 +408,7 @@ points 1000 times. For each permutation we computed the $S_{diff}^0 =
 S_{max}^0-S_{min}^0$ of the resulting CUSUM, and determined whether
 $S_{diff}^0$ was less than the corresponding value $S_{diff}$ in the
 CUSUM of the correctly ordered number of posts. $S_{max}^0$ and
-$S_{min}^0$ are the maximim/minimum values of the CUSUM for a given
+$S_{min}^0$ are the maximum/minimum values of the CUSUM for a given
 iteration. Their difference represents the farthest that the
 iteration's CUSUM strays from the CUSUM's mean.
 
@@ -389,8 +433,8 @@ quarter via:
 where $x_i$ is the outcome of one bootstrap iteration, and $N$ is the
 number of bootstrap iterations. Figure~\ref{fig:multiBoots} shows an
 example of five iterations. Points on the unlabeled lines denote
-differences of CUSUM points from the mean during one week. Note the
-that distance of those lines from the dotted mean line tends to be
+differences of CUSUM points from the mean during one week. Note that
+the distance of those lines from the dotted mean line tends to be
 much smaller than the CUSUM distance for the correctly sequenced
 values at the bottom.
 \begin{figure}[]
@@ -526,48 +570,6 @@ forum data to provide ({\em i}) forward-looking encouragement in place
 of recrimination, and ({\em ii}) to empower the student by
 personalizing the message, and providing a tool for planning.
 
-\section{Related Work}
-Many educators expend enormous amounts of effort to design their
-courses towards maximizing the value of student
-interactions. Regardless of the approach taken, a series of questions
-consistently arises: How effective is the course? Is it meeting the
-needs of the students? How can the needs of learners be better
-supported? What interactions are effective? How can they be further
-improved? Traditional approaches to answering these questions have
-involved student evaluation, the analysis of grades and attrition
-rates, and instructor perceptions most often gathered at the end of a
-course \cite{tayl16_1}.
-
-Norris et al. \cite{campbell2007academic} suggest that they would like
-analytics to be used to measure, compare and improve the performance
-of individuals, not just to better the experience but also to
-facilitate better outcomes to the activity.
-
-Dawson et al. \cite{doi} added that the analysis of educational data
-might be used to improve the student learning experience, which would
-not only require a quantitative, but also a qualitative one, or at
-least a qualitative interpretation of findings. The interpretation
-would have to include a value judgment on people's use of the
-environment: not only counting who uses the environment for what, but
-also judging what might be a good and what might be a bad experience,
-and offering suggestions for moving on the continuum from one to the
-other.
-
-Positive learning behaviors can be encouraged through the use of
-persuasive technologies. Any knowledge about given learners'
-behaviors, complemented with those of their peers, plus that
-identified as the ideal, could be used as a nudge. Specially if
-triggered by contextual clues, positive ``nudges'' may help students
-achieve their learning goals \cite{wilde2016understanding}. Fogg
-\cite{Fogg} anticipated that in the future students could be nudged in
-exactly this manner towards learning success.
-
-However the successful application of these technologies presupposes a
-very good understanding of the learners' behavior. Whilst such an
-understanding can be sought through learning analytics, this is a
-challenging endeavour as the data required may be incomplete,
-inaccurate, and technically difficult to both collect and process in
-real-time \cite{wilde2016understanding}. 
 
 Yeomans et al. \cite{Yeomans} suggest that planning prompts can help
 learners adopt productive frames of mind at the outset of a learning
