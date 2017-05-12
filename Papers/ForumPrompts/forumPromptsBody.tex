@@ -82,10 +82,11 @@ among course participants was examined in \cite{Huang2014}. This
 examination showed that frequent posters, or {\em superposters} do
 better in courses than the average among other participants. The
 authors further find that the presence of superposters has positive
-impact on the rest of the forum participants.
+impact on the rest of the forum participants. The importance of
+actively fostering interactions was shown in \cite{laba16}.
 
 But forum facilities have also steadily gained acceptance in
-residential, classroom bound courses. The forum there is a supplement
+residential, classroom-bound courses. The forum there is a supplement
 to in-class discussion---if such face-to-face interactions even occur
 in the lecture hall. Studies on how academic outcomes are related to
 forum participation in residential settings are missing because access
@@ -104,7 +105,7 @@ results. But residential students operate under very different
 incentive structures. Most desire a successful completion of each
 course. Even large residential classes are much smaller than MOOCs,
 and students often know at least some of their peers from face-to-face
-meeting. We might therefore expect that reactions to encouragement
+meetings. We might therefore expect that reactions to encouragement
 might differ from those in MOOC contexts.
 
 We analyzed a number of Piazza \cite{piazza} forum posting behaviors
@@ -132,19 +133,18 @@ of individuals, not just to better the experience but also to
 facilitate better outcomes to the activity.
 
 Dawson et al. \cite{doi} added that the analysis of educational data
-might be used to improve the student learning experience, which would
-not only require a quantitative, but also a qualitative one, or at
-least a qualitative interpretation of findings. The interpretation
-would have to include a value judgment on people's use of the
-environment: not only counting who uses the environment for what, but
-also judging what might be a good and what might be a bad experience,
-and offering suggestions for moving on the continuum from one to the
-other.
+might be used to improve the student learning experience. Such
+analysis would quantitative as well as qualitative approaches. The
+interpretation would have to include a value judgment on people's use
+of the environment: not only counting who uses the environment for
+what, but also judging what might be a good and what might be a bad
+experience, and offering suggestions for moving on the continuum from
+one to the other.
 
 Positive learning behaviors can be encouraged through the use of
 persuasive technologies. Any knowledge about given learners'
-behaviors, complemented with those of their peers, plus that
-identified as the ideal, could be used as a nudge. Specially if
+behaviors, complemented with those of their peers, and the assumed
+theoretical ideal, could be used as a nudge. It is argued that if
 triggered by contextual clues, positive ``nudges'' may help students
 achieve their learning goals \cite{wilde2016understanding}. Fogg
 \cite{Fogg} anticipated that in the future students could be nudged in
@@ -160,12 +160,12 @@ real-time \cite{wilde2016understanding}.
 
 \section{Dataset}
 
-Since 2011 many courses in the university have used the Piazza forum
-facility for its internal courses. Our dataset comprises the posts and
-comments of these usage years. From among 5000 university course
-offerings that have used the Piazza forum facility since 2011 we
-selected nine courses, with a total of around 40 offerings. We use the
-term {\em offering} to denote a course taught during a particular
+Since 2011 many courses in the studied university have used the Piazza
+forum facility for its internal courses. Our dataset comprises the
+posts and comments of these usage years. From among 5000 university
+course offerings that have used the Piazza forum facility since 2011
+we selected twelve courses, with a total of around 40 offerings. We use
+the term {\em offering} to denote a course taught during a particular
 quarter. We call the set of all a course's offerings a {\em course}.
 Most courses had multiple offerings since 2011, so we were able to
 include longitudinal forum usage data for most courses.
@@ -255,7 +255,7 @@ models of this type.
 Other strategies for viewing forum traffic as a graph exist to cover
 different goals. For example, \cite{Anwar2013} additionally consider
 posts themselves as one type of node. Linkages between the post nodes
-represent topics connections. Similarly, when user communication
+represent topic connections. Similarly, when user communication
 facilities operate on particular platforms, such as underground
 forums, which include private `buddy' connections, then such
 facilities may need to be modeled as well \cite{Moto2011}.
@@ -263,7 +263,8 @@ facilities may need to be modeled as well \cite{Moto2011}.
 For the purpose of identifying candidate time points for encouraging
 online conversation participation our chosen model suffices. Note that
 this work does not consider additional measures, such as content
-quality, for which a richer model would be required.
+quality, such as irrelevant postings, for which a richer model
+would be required.
 
 Many measures are used to quantify various aspects of social graphs
 \cite{hann2005, lesk14}. Not all are meaningful in the context of
@@ -286,7 +287,7 @@ the node's {\em out-degree weight}. For example, the {\em out-degree
 The number of incoming links is called the node's {\em
   in-degree}. Node $C$'s in-degree is $1$. Node $E$ has no links
 entering or exiting. The respective student either did not participate in
-the forum or never replied to others posts and never received replies on his posts.
+the forum or never replied to others' posts and never received replies on their posts.
 
 Analogous to Web pages, each node can be assigned a {\em page
   rank}. The intuition in this context is that student $S_1$'s
@@ -305,7 +306,7 @@ more than if the low-page-rank node $C$ commented on $D$.
 
 In terms of evaluating a student's participation in the forum, a high
 page rank, and high out-degree are positive. Low values are less
-positive. We chose these two values because of their relatively
+positive. We chose these two measures because of their relatively
 straight-forward meanings when applied to forum posts, and for their
 relevance to our goal of identifying potential intervention times.
 %% Figure~\ref{fig:smMultsPageRank} shows a summary of how average page
@@ -326,13 +327,13 @@ contents of posts would need to be considered: students who
 persistently post irrelevant contents contribute less positively to
 the forum than constructively participating students. However, for our
 purposes the two measures of page rank and out-degree provide strong
-enough signals. We in fact focus in the following material on the
-weighted out-degree to explore its contributions to insights into
-student behavior.
+enough signals. Because of space constraints we focus in the following
+material on the weighted out-degree to explore its contributions to
+insights into student behavior.
 
 \section{Analysis Procedure}
 
-For each course we identified the top 10\% students who contributed
+For each course we identified the top 10\% of students who contributed
 the most to the forum. For those students we computed the average of
 our chosen social graph measures. This average was computed for each
 week of each offering. The results provided a week-by-week time series
@@ -380,7 +381,7 @@ From an offering's weekly count of total posts to date by the top 10\%
 contributors, we constructed the incremental increase of posts for each
 week. For example, Figure~\ref{fig:cs229ChangePts}'s top line shows
 the incremental contributions for each week of the same machine
-learning offering shown in Figure~\ref{fig:cs229OutDeg}
+learning offering shown in Figure~\ref{fig:cs229OutDeg}.
 
 In order to discover for each week whether its number of contributions
 differed significantly from those of other weeks, we performed a
@@ -389,6 +390,7 @@ the data points of the top line in Figure~\ref{fig:cs229ChangePts}
 \cite{tayl16}
 \begin{figure}[]
        \centering
+       %*********\includegraphics{Figs/cs229Fall15_changePointFinalStyledPlusRawData.pdf}
        \includegraphics{Figs/cs229Fall15_changePointFinalStyledPlusRawData.pdf}
        \caption{\textnormal{Change points in forum posting 
            time series of a machine learning course.}}
@@ -441,7 +443,8 @@ values at the bottom.
        \centering
        \includegraphics{Figs/multiBootstrapCurvesUrbStud145Summer14.pdf}
        \caption{\textnormal{CUSUMs from permuted weekly post
-           contribution rates hover around the mean.}}
+           contribution rates hover around the mean.} The green
+           line indicates the number of posts.}
        \label{fig:multiBoots}
 \end{figure}
 Following \cite{tayl16} we determined the last week before a change
@@ -477,36 +480,41 @@ encouraging students who lag behind in forum contributions?'' We
 hypothesize that times when the top 10\% of contributors speed up,
 other students might be encouraged to do the same.
 
-Table~\ref{tbl:consistency} shows the weeks in which different courses
-tended to experience significant changes in behaviors of the top-10\%
-contributors. The percentages in a week's column indicate the
-proportion of the respective course's offerings that experienced jumps
-during that week.
+Each row in Table~\ref{tbl:consistency} shows to which degree
+offerings of that row's course over the years showed consistent
+changes in behaviors of the top-10\% contributors. The percentages in
+a week's column indicate the proportion of the respective course's
+offerings that experienced jumps during that week.
 \begin{table*}[htbp]
 \centering
-\caption{Consistency across offerings in weeks with change points.}
+\caption{Consistency of behavior changes across offerings in weeks with change points.}
 \label{tbl:consistency}
 \begin{tabular}{lcccccccc}
-Course                                                                                           & \multicolumn{1}{l}{Week3} & \multicolumn{1}{l}{Week4} & \multicolumn{1}{l}{Week5} & \multicolumn{1}{l}{Week6} & \multicolumn{1}{l}{Week7} & \multicolumn{1}{l}{Week8} & \multicolumn{1}{l}{Week9} & \multicolumn{1}{l}{Week10} \\ \cline{2-9} 
-\multicolumn{1}{l|}{AI Principles}                                                               & \multicolumn{1}{c|}{17\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{16\%} & \multicolumn{1}{c|}{33\%} & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
-\multicolumn{1}{l|}{Machine Learning}                                                            & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{14\%} & \multicolumn{1}{c|}{14\%} & \multicolumn{1}{c|}{14\%} & \multicolumn{1}{c|}{28\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
-\multicolumn{1}{l|}{Computer Vision}                                                             & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
-\multicolumn{1}{l|}{Decision Analysis}                                                           & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
-\multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Algorithms for \\ Molecular Biology\end{tabular}} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{33\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
-\multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}International \\ Urbanization\end{tabular}}       & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{20\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
+{\bf Course}                                                                                           & \multicolumn{1}{l}{Week3} & \multicolumn{1}{l}{Week4} & \multicolumn{1}{l}{Week5} & \multicolumn{1}{l}{Week6} & \multicolumn{1}{l}{Week7} & \multicolumn{1}{l}{Week8} & \multicolumn{1}{l}{Week9} & \multicolumn{1}{l}{Week10} \\ \cline{2-9} 
+\multicolumn{1}{l|}{AI Principles (6)}                                                               & \multicolumn{1}{c|}{17\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{16\%} & \multicolumn{1}{c|}{33\%} & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
+\multicolumn{1}{l|}{Machine Learning (7)}                                                            & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{14\%} & \multicolumn{1}{c|}{14\%} & \multicolumn{1}{c|}{14\%} & \multicolumn{1}{c|}{28\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
+\multicolumn{1}{l|}{Computer Vision (4)}                                                             & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
+\multicolumn{1}{l|}{Decision Analysis (2)}                                                           & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{50\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
+\multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}Algorithms for
+    \\ Molecular Biology (6)\end{tabular}} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{33\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
+\multicolumn{1}{l|}{\begin{tabular}[c]{@{}l@{}}International
+    \\ Urbanization (5)\end{tabular}}       & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{20\%} & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}     & \multicolumn{1}{c|}{}      \\ \cline{2-9} 
 \end{tabular}
 \end{table*}
 The results indicate that week six is particularly likely to
-experience changes in posting rates. We can hypothesize that the
-traffic is related to midterms. Week eight might be related to final
-projects coming due not too far out.
+experience changes in posting rates. Given that the university
+operates on a quarters schedule, we can hypothesize that the traffic
+is related to midterms. Week eight might be related to final projects
+coming due not too far out. Note, however, that the number of
+offerings (shown in parentheses with the course names) differ across
+courses. Thus 20\% for urban studies means only one of five offerings
+experienced a significant posting acceleration.
 
-Except for the urban studies course the only courses with regularities
-of change points among their offerings are science and engineering
-courses. The humanities and social sciences, while using forum
-facilities, have not included the forum as a central discussion
-hub. The numbers of students attending these courses are also
-smaller than the science/engineering classes.
+The only courses with an appreciable number of change points among
+their offerings are engineering courses. The humanities and social
+sciences, while using forum facilities, have not included the forum as
+a central discussion hub. The numbers of students attending these
+courses are also smaller than the science/engineering classes.
 
 When computing the percentages of Table~\ref{tbl:consistency} we
 included all offerings, reaching back to 2011. This year was one of
@@ -527,7 +535,8 @@ have not yet discussed. As mentioned, the horizontal dotted lines are
 \cite{nist2012}. The limits bound the values within which a process is
 expected to vary. For industrial processes the variations might lie
 around a known optimal operating level, such as a temperature. When no
-such level is known from the domain, a mean can be used. We use Python's spcchart library to obtain the control limits.
+such level is known from the domain, a mean can be used. Our process
+limits denote $2*\sigma$ distance from the mean.
 
 In the context of instructional forum use it would be possible to
 detect points, such as the one above the upper control limit in
@@ -568,8 +577,9 @@ slider. While this sketch is certainly not the ideal, and ultimate
 user interface, it illustrates the ideas of using past and current
 forum data to provide ({\em i}) forward-looking encouragement in place
 of recrimination, and ({\em ii}) to empower the student by
-personalizing the message, and providing a tool for planning.
-
+personalizing the message, and providing a tool for planning. Studies
+are needed to determine whether postings in response to even such
+personalized messages prove beneficial.
 
 Yeomans et al. \cite{Yeomans} suggest that planning prompts can help
 learners adopt productive frames of mind at the outset of a learning
@@ -582,7 +592,7 @@ rate in forum participation \cite{DBLP}, and student dropout rates
 \cite{Yang_peerinfluence} with the progression of courses in MOOC
 contexts. Anderson et al. \cite{DBLP:journals/corr/AndersonHKL14}
 examine the behavioral patterns of high- and low-achieving students
-and relate student's final grade to their engagement in MOOCS.
+and relate students' final grade to their engagement in MOOCS. 
 
 \section{Conclusion and Future Work}
 
@@ -603,11 +613,11 @@ extend our study to include measures of post quality. We focused on
 the top 10\% most prolific forum contributors. But the quality of
 those postings---by some measure---is important to include in
 evaluations of forum health. For that exploration we will include both
-page content and the page ranks we computed for this work.  Our graph
+page content and the page ranks we computed for this work.  Our graph-
 based approach has generated the necessary framework for this future
 investigation.
 
-A further use of page rank will be the ability to observe how teaching
+A further use of page rank will be to observe how teaching
 assistants interact with students around particular topics. TA participation has been filtered out from the our study to prevent bias. TAs will
 tend to have high page rank, and by filtering page rank computations
 by the topics of student postings we can expect to see topic-based
