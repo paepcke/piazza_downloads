@@ -39,9 +39,8 @@ This table contains the entire dataset dump of interactions on Piazza (questions
 Each row of the class_content table contains the following:
 
 
-_ _ _
 | Field_name | Type| Meaning/ interpretation |
-|--------|--------|---------------------------|
+|--------|--------|------------|
 |id	   |  varchar(255)       | id of the content|
 |type  |varchar(255)		 | Type of content : One of the following types - question, s_answer (or student's response), i_answer (or instructor's response) , dupe (duplicate) , note, feedback, followup|
 |     created	   | bigint(20)       | Time stamp when the entry was created
@@ -70,7 +69,7 @@ This table contains all the information about the participants (students/ instru
 Each row of the users table contains the following:
 
 | Field_name | Type| Meaning/ interpretation |
-|--------|--------|---------------|
+|--------|--------|----------------|
 |id	   	  |  varchar(255)       | id of the user|
 |answers |int(11)		 | Number of answers given by the user|
 |asks	 |int(11)      | Number of questions asked by the user|
@@ -84,6 +83,41 @@ Each row of the users table contains the following:
 
 
 
+- ***questions table:***
+This table contains all the questions and their associated responses, feedbacks/ followups and other relevant statistics.
+Each row of the questions table contains the following:
+
+| Field_name | Type| Meaning/ interpretation |
+|--------|--------|----------------|
+|id	   	  |  varchar(255)       | id of the question|
+|question_text |longtext		 | Body of the question|
+|role_of_poster	 |varchar(255)       |Indicates whether the question was posted by a student or instructor|
+|no_upvotes_on_question| int(11)  | Total number of upvotes on the question (equivalent to "good question" |
+|i_answer| longtext       | Intsructor's response for the question (if any)
+|s_answer|longtext  |Students' response for the question (if any)
+|no_upvotes_on_i_answer| int(11)        |Number of upvotes on the instructor answer
+|no_upvotes_on_s_answer|int(11) | Number of upvotes on the student answer
+|no_unique_collaborations| int(11)| Number of unique collaborations involved in the thread (how many unique users participated in the thread)
+|follow_up_thread|longtext | The entire follow up thread concatenated and separated by a delimiter|
+|length_of_follow_up_thread |int(11) | Total number of follow_ups or feedbacks in the thread|
+|folders|longtext | Folders associated with the question|
+|tags|longtext  | Tags associated with the question|
+
+- ***notes table:***
+This table contains all the notes and their feedbacks/ followups and other relevant statistics.
+Each row of the notes table contains the following:
+
+| Field_name | Type| Meaning/ interpretation |
+|--------|--------|----------------|
+|id	   	  |  varchar(255)       | id of the note|
+|notes_text |longtext		 | Body of the note|
+|role_of_poster	 |varchar(255)       |Indicates whether the note was posted by a student or instructor|
+|no_upvotes_on_note| int(11)  | Total number of upvotes on the note (equivalent to "good note" |
+|no_unique_collaborations| int(11)| Number of unique collaborations involved in the thread (how many unique users participated in the thread)
+|follow_up_thread|longtext | The entire follow up thread concatenated and separated by a delimiter|
+|length_of_follow_up_thread |int(11) | Total number of follow_ups or feedbacks in the thread|
+|folders|longtext | Folders associated with the note|
+|tags|longtext  | Tags associated with the note|
 
 
 <!--just give the command python new_schema_piazza.py with the arguments described below:
