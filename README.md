@@ -38,9 +38,10 @@ There are four tables for each of the courses that we analyze:
 This table contains the entire dataset dump of interactions on Piazza (questions, notes, follow-ups, student responses, instructor responses, feedbacks; literally everything)
 Each row of the class_content table contains the following:
 
+
 _ _ _
 | Field_name | Type| Meaning/ interpretation |
-|--------|--------|
+|--------|--------|---------------------------|
 |id	   |  varchar(255)       | id of the content|
 |type  |varchar(255)		 | Type of content : One of the following types - question, s_answer (or student's response), i_answer (or instructor's response) , dupe (duplicate) , note, feedback, followup|
 |     created	   | bigint(20)       | Time stamp when the entry was created
@@ -64,12 +65,12 @@ _ _ _
 |     role_of_poster  | varchar(255)       | Role of the poster (student or instructor). Most of the instructors would have been identified. However, because of lack of explicit information in the dataset about the role of the user, some of them are marked as "not available"
 |     root_id  |varchar(255)       | Root id of the starting post in order to associate a child with its parent question. This is useful in creating the other tables
 
-- *** users table:***
+- ***users table:***
 This table contains all the information about the participants (students/ instructors) in the course.
 Each row of the users table contains the following:
 
 | Field_name | Type| Meaning/ interpretation |
-|--------|--------|
+|--------|--------|---------------|
 |id	   	  |  varchar(255)       | id of the user|
 |answers |int(11)		 | Number of answers given by the user|
 |asks	 |int(11)      | Number of questions asked by the user|
@@ -80,6 +81,9 @@ Each row of the users table contains the following:
 |total_no_endorsements|int(11) | Total number of endorsements summed up over all the answers written by the user |
 |role| varchar(255)| Role of the user : student / instructor. Since this information is not available explicitly in the database, therefore we have some entries as "not available"
 |contribution|int(11) | Total contribution by the user (for assigning credit) based on a lot of factors|
+
+
+
 
 
 <!--just give the command python new_schema_piazza.py with the arguments described below:
