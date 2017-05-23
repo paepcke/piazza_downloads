@@ -119,6 +119,7 @@ Each row of the notes table contains the following:
 |folders|longtext | Folders associated with the note|
 |tags|longtext  | Tags associated with the note|
 
+Note: In the Config class, we have a credit dictionary, that is configurable by the instructors. Hence, the instructors can decide how much weightage is to be given to each of the factors that goes into evaluating the holistic contribution of the student in the class, e.g. weightage for number of questions asked, number of questions answered, number of endorsed answers, etc.
 
 <!--just give the command python new_schema_piazza.py with the arguments described below:
 		course1
